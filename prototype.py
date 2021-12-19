@@ -1,5 +1,4 @@
 import streamlit as st
-import spacy_streamlit
 import spacy
 from spacy import displacy
 
@@ -33,10 +32,12 @@ st.title("Patterns in poetry")
 
 #initialization
 with st.form(key='text_form'):
-    st.header("Input text")
-    text = st.text_area("enter a text to analyze :",
-                        DEFAULT_TEXT, height=400)
-    submit_button = st.form_submit_button(label='analyze')
+    st.header('Input text')
+    text = st.text_area(label='enter a text to analyze :',
+                        value=DEFAULT_TEXT, height=400,
+                        help='you can copy paste a text here')
+    submit_button = st.form_submit_button(label='analyze',
+                                help='click to pass the text to the analyzer')
 
 text = text.replace('      here is an example:', '')
 
