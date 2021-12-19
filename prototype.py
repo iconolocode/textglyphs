@@ -4,7 +4,8 @@ import spacy
 from spacy import displacy
 
 
-DEFAULT_TEXT = """A Drop Fell on the Apple Tree - 
+DEFAULT_TEXT = """      here is an example:
+A Drop Fell on the Apple Tree - 
 Another -  on the Roof - 
 A Half a Dozen kissed the Eaves - 
 And made the Gables laugh - 
@@ -34,6 +35,8 @@ with st.form(key='text_form'):
     text = st.text_area("enter a text to analyze :",
                         DEFAULT_TEXT, height=400)
     submit_button = st.form_submit_button(label='analyze')
+
+text = text.replace('      here is an example:', '')
 
 ner = spacy.load(spacy_model)
 
