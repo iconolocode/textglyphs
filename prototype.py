@@ -30,6 +30,8 @@ spacy_model = "en_core_web_sm"
 
 st.title("Patterns in poetry")
 
+
+#initialization
 with st.form(key='text_form'):
     st.header("Input text")
     text = st.text_area("enter a text to analyze :",
@@ -37,6 +39,11 @@ with st.form(key='text_form'):
     submit_button = st.form_submit_button(label='analyze')
 
 text = text.replace('      here is an example:', '')
+
+
+
+#named ents
+st.header("Named entities analysis")
 
 ner = spacy.load(spacy_model)
 
