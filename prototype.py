@@ -184,7 +184,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
         'verbs and auxiliaries': ['VERB', 'AUX'],
         'adjectives, adverbs and adposition': ['ADJ', 'ADV', 'ADP'],
         'conjuctions and particles': ['CONJ', 'ŚCONJ', 'CCONJ', 'PART'],
-        'determiner': ['DET'],
+        'determiners': ['DET'],
         'interjections': ['INTJ'],
         'punctuaction and extra spaces': ['PUNCT', 'SPACE'],
         'numerals and special characters': ['NUM', 'SYM']
@@ -210,7 +210,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
             search_options = pos_cat[search_bar[0]]
         else:
             search_options = ['']
-            sleep(2)
+            sleep(1)
             st.sidebar.error('unvalid selection')
             st.error('unvalid selection')
 
