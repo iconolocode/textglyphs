@@ -65,3 +65,9 @@ for verse in verses:
     st.write(f"{style}{wrapper.format(html)}", unsafe_allow_html=True)
 
 st.text(f"Analyzed using spaCy model {spacy_model}")
+
+with st.expander("More information (click here to hide)", expanded=True):
+    st.info("""This model extracts key information. It is trained mostly on texts related to news, but also on conversations, weblogs, religious texts.""")
+    st.info("""*Tips for interpretation:* Are the pieces of information that are extracted important in the poem, or is their role more of one of ornaments to add detail to a text?
+
+If there are misclassifications, this could be due to the model not being trained for poetry. But there could also be other reasons that could have lead to this, such as the sentence structure or lexical context. It may be interesting to look at those, if they confuse the machine, what does this mean for us? """)
