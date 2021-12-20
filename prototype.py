@@ -24,10 +24,10 @@ And bathed them in the Glee -
 Then Orient showed a single Flag,
 And signed the Fete away - """
 
-spacy_model = "en_core_web_sm"
+spacy_model = 'en_core_web_sm'
 
 
-st.title("Patterns in poetry")
+st.title('Patterns in poetry')
 
 
 #initialization
@@ -50,7 +50,7 @@ def spacy_ner(text):
     return {'text': full_text, 'lines': verses}
 
 def display_ner(spacy_text):
-    st.header("Named entities analysis")
+    st.header('Named entities analysis')
     
     #labels = labels or [ent.label_ for ent in doc.ents]
     
@@ -64,15 +64,24 @@ def display_ner(spacy_text):
         wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.25rem; padding-left: 3em">{}</div>"""
         style = """<style>mark.entity { display: inline-block }</style>"""
         html = html.replace('\n', ' ')
-        st.write(f"{style}{wrapper.format(html)}", unsafe_allow_html=True)
+        st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
     
     st.text(f"Analyzed using spaCy model {spacy_model}")
     
-    with st.expander("More information (click here to hide)", expanded=True):
-        st.info("""This model extracts key information. It is trained mostly on texts related to news, but also on conversations, weblogs, religious texts.""")
-        st.info("""*Tips for interpretation:* Are the pieces of information that are extracted important in the poem, or is their role more of one of ornaments to add detail to a text?
-    
- If there are misclassifications, this could be due to the model not being trained for poetry. But there could also be other reasons that could have lead to this, such as the sentence structure or lexical context. It may be interesting to look at those, if they confuse the machine, what does this mean for us? """)
+    with st.expander('More information (click here to hide)', expanded=True):
+        st.info('This model extracts key information. It is trained mostly on'
+                'texts related to news, but also on conversations, weblogs,'
+                'religious texts.')
+            
+        st.info('*Tips for interpretation:* Are the pieces of information'
+                'that are extracted important in the poem, or is their role'
+                'more of one of ornaments to add detail to a text?' '\n\n'
+                'If there are misclassifications, this could be due to the'
+                'model not being trained for poetry. But there could also be'
+                'other reasons that could have lead to this, such as the'
+                'sentence structure or lexical context. It may be interesting'
+                'to look at those, if they confuse the machine, what does'
+                'this mean for us?')
     
 display_ner(spacy_ner(text))
 
