@@ -6,7 +6,7 @@ from spacy.tokens import Span
 from time import sleep
 
 
-DEFAULT_TEXT = """      here is an example:
+default_text = """      here is an example:
 A Drop Fell on the Apple Tree - 
 Another -  on the Roof - 
 A Half a Dozen kissed the Eaves - 
@@ -27,24 +27,51 @@ And bathed them in the Glee -
 Then Orient showed a single Flag,
 And signed the Fete away - """
 
+text = 'error: no entered text'
+
 spacy_model = 'en_core_web_sm'
 
 wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.5rem; padding-left: 3em">{}</div>"""
 style = """<style>mark.entity { display: inline-block }</style>"""
 
-st.title('Patterns in poetry')
 
+def main():
+    st.title('Patterns in poetry')
+    
+    with st.form(key='text_form'):
+        st.header('Input text')
+        text = st.text_area(label='enter a text to analyze :',
+                            value=default_text, height=400,
+                            help='you can copy paste a text here')
+        st.form_submit_button(label='analyze',
+                                    help='click to pass the text to the analyzer')
 
-#initialization
-with st.form(key='text_form'):
-    st.header('Input text')
-    text = st.text_area(label='enter a text to analyze :',
-                        value=DEFAULT_TEXT, height=400,
-                        help='you can copy paste a text here')
-    submit_button = st.form_submit_button(label='analyze',
-                                help='click to pass the text to the analyzer')
-
-text = text.replace('      here is an example:', '')
+    text = text.replace('      here is an example:', '')
+    
+    menu = ['text entry',
+            'POS pattern view',
+            'POS parts search',
+            'named entities']
+    
+    current = st.selectbox('navigation', menu)
+    
+        
+    if current == 'POS pattern view':
+        opacity = opacity_ruler()
+        
+        display_pos(spacy_pos(text),
+                    opacity=opacity,
+                    pos_style='pattern')
+        
+    if current == 'POS parts search':
+        opacity = opacity_ruler()
+        
+        display_pos(spacy_pos(text),
+                    opacity=opacity,
+                    pos_style='search')
+        
+    elif current == 'named entities':
+        display_ner(spacy_ner(text))
 
 
 @st.cache(allow_output_mutation=True)
@@ -214,15 +241,15 @@ def display_pos(spacy_text, pos_style = 'pattern', opacity = 10):
         st.info('*Tips for interpretation: TODO*')
 
 
-opacity = st.slider('Annotation presence', 0, 10, 5,
-                    help='You can make the annotations more vivid or discrete'
-                    ' to focus on them or to make them subtle when reading')
+def opacity_ruler():
+    opacity = st.slider('Annotation presence', 0, 10, 5,
+                        help=
+                        'You can make the annotations more vivid or discrete '
+                        'to focus on them or to make them subtle when reading')
+    return opacity
 
-display_pos(spacy_pos(text),
-            opacity=opacity,
-            pos_style='search')
-
-
+if __name__ == '__main__':
+    main()
 
 
 
