@@ -1,6 +1,8 @@
 import streamlit as st
 import spacy
 from spacy import displacy
+from spacy.matcher import Matcher
+from spacy.tokens import Span
 
 
 DEFAULT_TEXT = """      here is an example:
@@ -84,6 +86,72 @@ def display_ner(spacy_text):
                 'this mean for us?')
     
 display_ner(spacy_ner(text))
+
+@st.cache(allow_output_mutation=True)
+def spacy_pos(text):
+    pos = spacy.load(spacy_model, disable=["ner"])
+    full_text = pos(text)
+    verses = [pos(verse) for verse in text.split('\n')]
+    
+    patterns = [
+            [{'POS': 'ADJ'}],
+            [{'POS': 'ADP'}],
+            [{'POS': 'ADV'}],
+            [{'POS': 'AUX'}],
+            [{'POS': 'CONJ'}],
+            [{'POS': 'DET'}],
+            [{'POS': 'INTJ'}],
+            [{'POS': 'NOUN'}],
+            [{'POS': 'NUM'}],
+            [{'POS': 'PART'}],
+            [{'POS': 'PRON'}],
+            [{'POS': 'PROPN'}],
+            [{'POS': 'PUNCT'}],
+            [{'POS': 'SYM'}],
+            [{'POS': 'VERB'}],
+            [{'POS': 'X'}],
+            [{'POS': 'SPACE'}],
+            [{'POS': 'CCONJ'}],
+            [{'POS': 'SCONJ'}]            
+            ]
+    
+    matcher = Matcher(pos.vocab)
+    for pattern in patterns:
+        matcher.add(key=pattern[0]['POS'], patterns=[pattern])
+    
+    for verse in verses:
+        matches = matcher(verse)
+        for id, start, end in matches:
+            new_ent = Span(verse, start, end, label=id)
+            verse.ents = list(verse.ents) + [new_ent]
+    
+    return {'text': full_text, 'lines': verses}    
+    
+
+def display_pos(spacy_text):
+    st.header('Part-Of-Speech analysis')
+    
+    #labels = labels or [ent.label_ for ent in doc.ents]
+    
+    for verse in spacy_text['lines']:
+        html = displacy.render(
+            verse,
+            style="ent"
+            #options={"ents": label_select, "colors": colors},
+        )
+        #displacy.render(verse, style='ent')
+        wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.25rem; padding-left: 3em">{}</div>"""
+        style = """<style>mark.entity { display: inline-block }</style>"""
+        html = html.replace('\n', ' ')
+        st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
+    
+    st.text(f"Analyzed using spaCy model {spacy_model}")
+
+display_pos(spacy_pos(text))
+
+
+
+
 
 
     
