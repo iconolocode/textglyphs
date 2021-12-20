@@ -41,7 +41,7 @@ def main():
     with st.sidebar.form(key='text_form'):
         with st.expander('text editor', expanded=True):
             text = st.text_area(label='enter a text to analyze :',
-                                value=default_text, height=400,
+                                value=default_text, height=300,
                                 help='you can copy paste a text here')
         st.form_submit_button(label='analyze',
                                     help='save the text in the box above')
