@@ -36,41 +36,42 @@ style = """<style>mark.entity { display: inline-block }</style>"""
 
 
 def main():
-    st.title('Patterns in poetry')
+    st.sidebar.title('Patterns in poetry tool')
     
-    with st.form(key='text_form'):
-        st.header('Input text')
-        text = st.text_area(label='enter a text to analyze :',
-                            value=default_text, height=400,
-                            help='you can copy paste a text here')
+    with st.sidebar.form(key='text_form'):
+        with st.expander('text editor', expanded=True):
+            text = st.text_area(label='enter a text to analyze :',
+                                value=default_text, height=400,
+                                help='you can copy paste a text here')
         st.form_submit_button(label='analyze',
-                                    help='click to pass the text to the analyzer')
+                                    help='save the text in the box above')
 
     text = text.replace('      here is an example:', '')
     
-    menu = ['text entry',
-            'POS pattern view',
-            'POS parts search',
-            'named entities']
+    menu = ['parts of speech pattern view',
+            'parts of speech search filter',
+            'named entities recognition']
     
-    current = st.selectbox('navigation', menu)
+    st.sidebar.text('')
+    st.sidebar.subheader('generate annotation')
+    current = st.sidebar.radio('switch between filters', menu)
     
         
-    if current == 'POS pattern view':
+    if current == 'parts of speech pattern view':
         opacity = opacity_ruler()
         
         display_pos(spacy_pos(text),
                     opacity=opacity,
                     pos_style='pattern')
         
-    if current == 'POS parts search':
+    if current == 'parts of speech search filter':
         opacity = opacity_ruler()
         
         display_pos(spacy_pos(text),
                     opacity=opacity,
                     pos_style='search')
         
-    elif current == 'named entities':
+    elif current == 'named entities recognition':
         display_ner(spacy_ner(text))
 
 
@@ -82,7 +83,6 @@ def spacy_ner(text):
     return {'text': full_text, 'lines': verses}
 
 def display_ner(spacy_text):
-    st.header('Named entities analysis')
     
     #labels = labels or [ent.label_ for ent in doc.ents]
     
@@ -97,14 +97,15 @@ def display_ner(spacy_text):
         html = html.replace('\n', ' ')
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
     
-    st.text(f"Analyzed using spaCy model {spacy_model}")
+    st.title('')
+    st.caption(f'     probability based annotations by spaCy model {spacy_model}')
     
     with st.expander('More information (click here to hide)', expanded=True):
-        st.info('This model extracts key information. It is trained mostly on'
+        st.sidebar.info('This model extracts key information. It is trained mostly on'
                 'texts related to news, but also on conversations, weblogs,'
                 'religious texts.')
             
-        st.info('*Tips for interpretation:* Are the pieces of information'
+        st.sidebar.info('*Tips for interpretation:* Are the pieces of information'
                 'that are extracted important in the poem, or is their role'
                 'more of one of ornaments to add detail to a text?' '\n\n'
                 'If there are misclassifications, this could be due to the'
@@ -158,7 +159,6 @@ def spacy_pos(text):
     
 
 def display_pos(spacy_text, pos_style = 'pattern', opacity = 10):
-    st.header('Part of Speech analysis')
     
     alpha = str(opacity / 10)
     
@@ -205,7 +205,7 @@ def display_pos(spacy_text, pos_style = 'pattern', opacity = 10):
     pos_options ={"colors": pos_colors, 'template': pos_pattern_styling}
     
     if pos_style == 'search':
-        search_bar = st.multiselect('select the parts of speech to focus on:',
+        search_bar = st.sidebar.multiselect('select the parts to focus on:',
                                     pos_cat, default='nouns and pronouns',
                                     help='TODO')
         search_options = []
@@ -217,6 +217,7 @@ def display_pos(spacy_text, pos_style = 'pattern', opacity = 10):
         else:
             search_options = ['']
             sleep(2)
+            st.sidebar.error('unvalid selection')
             st.error('unvalid selection')
 
         pos_options.update({'template': pos_search_styling})
@@ -235,14 +236,15 @@ def display_pos(spacy_text, pos_style = 'pattern', opacity = 10):
         html = html.replace('\n', ' ')
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
     
-    st.text(f"Analyzed using spaCy model {spacy_model}")
+    st.title('')
+    st.caption(f'probability based annotations by spaCy model {spacy_model}')
     
     with st.expander('More information (click here to hide)', expanded=True):
-        st.info('*Tips for interpretation: TODO*')
+        st.sidebar.info('*Tips for interpretation: TODO*')
 
 
 def opacity_ruler():
-    opacity = st.slider('Annotation presence', 0, 10, 5,
+    opacity = st.sidebar.slider('Annotation presence', 0, 10, 5,
                         help=
                         'You can make the annotations more vivid or discrete '
                         'to focus on them or to make them subtle when reading')
