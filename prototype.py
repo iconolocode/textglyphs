@@ -128,18 +128,50 @@ def spacy_pos(text):
     return {'text': full_text, 'lines': verses}    
     
 
-def display_pos(spacy_text):
+def display_pos(spacy_text, opacity = 10):
     st.header('Part Of Speech analysis')
+    
+    alpha = str(opacity / 10)
+    
+    pos_colors = {'ADJ': 'hsla(330, 80%, 60%, '+ alpha +')',
+            'ADP': 'hsla(280, 80%, 70%, '+ alpha +')',
+            'ADV': 'hsla(310, 90%, 70%, '+ alpha +')',
+
+            'AUX': 'hsla(100, 60%, 70%, '+ alpha +')',
+            'VERB': 'hsla(120, 80%, 60%, '+ alpha +')',
+
+            'CONJ': 'hsla(14, 90%, 70%, '+ alpha +')',
+            'CCONJ': 'hsla(14, 90%, 70%, '+ alpha +')',
+            'SCONJ': 'hsla(14, 90%, 70%, '+ alpha +')',
+
+            'DET': 'hsla(330, 50%, 90%, '+ alpha +')',
+            'PART': 'hsla(350, 70%, 80%, '+ alpha +')',
+            'INTJ': 'hsla(50, 100%, 60%, '+ alpha +')',
+
+            'PROPN': 'hsla(220, 100%, 60%, '+ alpha +')',
+            'NOUN': 'hsla(190, 100%, 40%, '+ alpha +')',
+            'PRON': 'hsla(190, 70%, 70%, '+ alpha +')',
+
+            'SPACE': 'hsla(360, 0%, 20%, '+ alpha +')',
+            'NUM': 'hsla(360, 0%, 50%, '+ alpha +')',
+            'SYM': 'hsla(130, 20%, 30% '+ alpha +')',
+            'PUNCT': 'hsla(360, 20%, 30%, '+ alpha +')',
+
+            'X': 'hsla(360, 100%, 100%, '+ alpha +')'
+            }
+    
+    pos_styling = """<mark class="entity" style="background: {bg}; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1em; border-radius: 0.35em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
+    <span {text}, style="color: white">{label}</span></mark>"""
     
     #labels = labels or [ent.label_ for ent in doc.ents]
     
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
-            style="ent"
-            #options={"ents": label_select, "colors": colors},
+            style="ent",
+            options={"colors": pos_colors, 'template': pos_styling},
         )
-        #displacy.render(verse, style='ent')
+        
         wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.25rem; padding-left: 3em">{}</div>"""
         style = """<style>mark.entity { display: inline-block }</style>"""
         html = html.replace('\n', ' ')
@@ -150,7 +182,12 @@ def display_pos(spacy_text):
     with st.expander('More information (click here to hide)', expanded=True):
         st.info('*Tips for interpretation: TODO*')
 
-display_pos(spacy_pos(text))
+opacity = st.slider('Annotation presence', 0, 10, 5,
+                    help='You can make the annotations more vivid or discrete'
+                    ' to focus on them or to make them subtle when reading')
+
+display_pos(spacy_pos(text),
+            opacity=opacity)
 
 
 
