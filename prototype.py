@@ -42,32 +42,39 @@ with st.form(key='text_form'):
 text = text.replace('      here is an example:', '')
 
 
+@st.cache(allow_output_mutation=True)
+def spacy_ner(text):
+    ner = spacy.load(spacy_model)
+    full_text = ner(text)
+    verses = [ner(verse) for verse in text.split('\n')]
+    return {'text': full_text, 'lines': verses}
 
-#named ents
-st.header("Named entities analysis")
+def display_ner(spacy_text):
+    st.header("Named entities analysis")
+    
+    #labels = labels or [ent.label_ for ent in doc.ents]
+    
+    for verse in spacy_text['lines']:
+        html = displacy.render(
+            verse,
+            style="ent"
+            #options={"ents": label_select, "colors": colors},
+        )
+        #displacy.render(verse, style='ent')
+        wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.25rem; padding-left: 3em">{}</div>"""
+        style = """<style>mark.entity { display: inline-block }</style>"""
+        html = html.replace('\n', ' ')
+        st.write(f"{style}{wrapper.format(html)}", unsafe_allow_html=True)
+    
+    st.text(f"Analyzed using spaCy model {spacy_model}")
+    
+    with st.expander("More information (click here to hide)", expanded=True):
+        st.info("""This model extracts key information. It is trained mostly on texts related to news, but also on conversations, weblogs, religious texts.""")
+        st.info("""*Tips for interpretation:* Are the pieces of information that are extracted important in the poem, or is their role more of one of ornaments to add detail to a text?
+    
+ If there are misclassifications, this could be due to the model not being trained for poetry. But there could also be other reasons that could have lead to this, such as the sentence structure or lexical context. It may be interesting to look at those, if they confuse the machine, what does this mean for us? """)
+    
+display_ner(spacy_ner(text))
 
-ner = spacy.load(spacy_model)
 
-text_ner = ner(text)
-verses = [ner(verse) for verse in text.split('\n')]
-#labels = labels or [ent.label_ for ent in doc.ents]
-
-for verse in verses:
-    html = displacy.render(
-        verse,
-        style="ent"
-        #options={"ents": label_select, "colors": colors},
-    )
-    #displacy.render(verse, style='ent')
-    wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.25rem; padding-left: 3em">{}</div>"""
-    style = "<style>mark.entity { display: inline-block }</style>"
-    html = html.replace('\n', ' ')
-    st.write(f"{style}{wrapper.format(html)}", unsafe_allow_html=True)
-
-st.text(f"Analyzed using spaCy model {spacy_model}")
-
-with st.expander("More information (click here to hide)", expanded=True):
-    st.info("""This model extracts key information. It is trained mostly on texts related to news, but also on conversations, weblogs, religious texts.""")
-    st.info("""*Tips for interpretation:* Are the pieces of information that are extracted important in the poem, or is their role more of one of ornaments to add detail to a text?
-
-If there are misclassifications, this could be due to the model not being trained for poetry. But there could also be other reasons that could have lead to this, such as the sentence structure or lexical context. It may be interesting to look at those, if they confuse the machine, what does this mean for us? """)
+    
