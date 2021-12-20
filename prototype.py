@@ -161,8 +161,8 @@ def display_pos(spacy_text, pos_style = 'pattern', opacity = 10):
             'X': 'hsla(360, 100%, 100%, '+ alpha +')'
             }
     
-    pos_pattern_styling = """<mark class="entity" style="background: {bg}; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1em; border-radius: 0.8em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
-    <span {text}, style="color: white">{label}</span></mark>"""
+    pos_pattern_styling = """<mark class="entity" style="background: {bg}; width: 65px; padding: 0.5em 0.4em; line-height: 1em; border-radius: 0.2em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
+    <span {text}, style="color: black; opacity: """+ str(1 - opacity/10)+"""">{label}</span></mark>"""
     
     pos_search_styling = """<mark class="entity" style="background: linear-gradient(90deg, transparent, {bg}); padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1em; border-radius: 0.8em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
     <span style="font-weight: bold">{text}</span><span style="color: white">{label}</span></mark>"""
@@ -178,7 +178,7 @@ def display_pos(spacy_text, pos_style = 'pattern', opacity = 10):
         html = displacy.render(
             verse,
             style="ent",
-            options={"colors": pos_colors, 'template': pos_styling, 'ents': ['AUX', 'VERB']},
+            options={"colors": pos_colors, 'template': pos_styling}#, 'ents': ['AUX', 'VERB']},
         )
         
         html = html.replace('\n', ' ')
@@ -195,7 +195,7 @@ opacity = st.slider('Annotation presence', 0, 10, 5,
 
 display_pos(spacy_pos(text),
             opacity=opacity,
-            pos_style='search')
+            pos_style='pattern')
 
 
 
