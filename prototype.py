@@ -48,28 +48,28 @@ def main():
 
     text = text.replace('      here is an example:', '')
 
-    menu = ['parts of speech pattern view',
-            'parts of speech search filter',
-            'named entities recognition']
+    menu = ['\N{Jigsaw Puzzle Piece} parts of speech pattern view',
+            '\N{Right-Pointing Magnifying Glass} parts of speech search filter',
+            '\N{Busts in Silhouette} named entities recognition']
 
     st.sidebar.subheader('generate annotation')
     current = st.sidebar.radio('switch between filters', menu)
 
-    if current == 'parts of speech pattern view':
+    if current == '\N{Jigsaw Puzzle Piece} parts of speech pattern view':
         opacity = opacity_ruler()
 
         display_pos(spacy_pos(text),
                     opacity=opacity,
                     pos_style='pattern')
 
-    if current == 'parts of speech search filter':
+    if current == '\N{Right-Pointing Magnifying Glass} parts of speech search filter':
         opacity = opacity_ruler()
 
         display_pos(spacy_pos(text),
                     opacity=opacity,
                     pos_style='search')
 
-    elif current == 'named entities recognition':
+    elif current == '\N{Busts in Silhouette} named entities recognition':
         display_ner(spacy_ner(text))
 
 
@@ -191,7 +191,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
     }
 
     pos_pattern_styling = """<mark class="entity" style="background: {bg}; width: 65px; padding: 0.5em 0.4em; line-height: 1em; border-radius: 0.2em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
-    <span {text}, style="color: black; opacity: """ + str(1 - opacity/10)+"""">{label}</span></mark>"""
+    <span {text}, style="color: black; opacity: """ + str(1 - opacity/9)+"""">{label}</span></mark>"""
 
     pos_search_styling = """<mark class="entity" style="background: linear-gradient(90deg, transparent, {bg}); padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1em; border-radius: 0.8em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
     <span style="font-weight: bold">{text}</span><span style="color: white">{label}</span></mark>"""
