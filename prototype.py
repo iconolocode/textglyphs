@@ -59,7 +59,7 @@ for verse in verses:
         #options={"ents": label_select, "colors": colors},
     )
     #displacy.render(verse, style='ent')
-    wrapper = """<div style="background: white; overflow-x: auto; border: 0px; border-radius: 0.25rem; padding-left: 3em">{}</div>"""
+    wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.25rem; padding-left: 3em">{}</div>"""
     style = "<style>mark.entity { display: inline-block }</style>"
     html = html.replace('\n', ' ')
     st.write(f"{style}{wrapper.format(html)}", unsafe_allow_html=True)
