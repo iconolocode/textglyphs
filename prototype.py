@@ -129,7 +129,7 @@ def spacy_pos(text):
     
 
 def display_pos(spacy_text):
-    st.header('Part-Of-Speech analysis')
+    st.header('Part Of Speech analysis')
     
     #labels = labels or [ent.label_ for ent in doc.ents]
     
@@ -146,6 +146,9 @@ def display_pos(spacy_text):
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
     
     st.text(f"Analyzed using spaCy model {spacy_model}")
+    
+    with st.expander('More information (click here to hide)', expanded=True):
+        st.info('*Tips for interpretation: TODO*')
 
 display_pos(spacy_pos(text))
 
