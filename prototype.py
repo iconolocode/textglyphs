@@ -28,6 +28,8 @@ And signed the Fete away - """
 
 spacy_model = 'en_core_web_sm'
 
+wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.5rem; padding-left: 3em">{}</div>"""
+style = """<style>mark.entity { display: inline-block }</style>"""
 
 st.title('Patterns in poetry')
 
@@ -63,8 +65,7 @@ def display_ner(spacy_text):
             #options={"ents": label_select, "colors": colors},
         )
         #displacy.render(verse, style='ent')
-        wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.25rem; padding-left: 3em">{}</div>"""
-        style = """<style>mark.entity { display: inline-block }</style>"""
+        
         html = html.replace('\n', ' ')
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
     
@@ -85,7 +86,7 @@ def display_ner(spacy_text):
                 'to look at those, if they confuse the machine, what does'
                 'this mean for us?')
     
-display_ner(spacy_ner(text))
+#display_ner(spacy_ner(text))
 
 @st.cache(allow_output_mutation=True)
 def spacy_pos(text):
@@ -128,7 +129,7 @@ def spacy_pos(text):
     return {'text': full_text, 'lines': verses}    
     
 
-def display_pos(spacy_text, opacity = 10):
+def display_pos(spacy_text, pos_style = 'pattern', opacity = 10):
     st.header('Part Of Speech analysis')
     
     alpha = str(opacity / 10)
@@ -160,8 +161,16 @@ def display_pos(spacy_text, opacity = 10):
             'X': 'hsla(360, 100%, 100%, '+ alpha +')'
             }
     
-    pos_styling = """<mark class="entity" style="background: {bg}; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1em; border-radius: 0.35em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
+    pos_pattern_styling = """<mark class="entity" style="background: {bg}; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1em; border-radius: 0.8em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
     <span {text}, style="color: white">{label}</span></mark>"""
+    
+    pos_search_styling = """<mark class="entity" style="background: linear-gradient(90deg, transparent, {bg}); padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1em; border-radius: 0.8em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
+    <span style="font-weight: bold">{text}</span><span style="color: white">{label}</span></mark>"""
+    
+    if pos_style == 'pattern':
+        pos_styling = pos_pattern_styling
+    elif pos_style == 'search':
+        pos_styling = pos_search_styling
     
     #labels = labels or [ent.label_ for ent in doc.ents]
     
@@ -169,11 +178,9 @@ def display_pos(spacy_text, opacity = 10):
         html = displacy.render(
             verse,
             style="ent",
-            options={"colors": pos_colors, 'template': pos_styling},
+            options={"colors": pos_colors, 'template': pos_styling, 'ents': ['AUX', 'VERB']},
         )
         
-        wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.25rem; padding-left: 3em">{}</div>"""
-        style = """<style>mark.entity { display: inline-block }</style>"""
         html = html.replace('\n', ' ')
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
     
@@ -187,8 +194,8 @@ opacity = st.slider('Annotation presence', 0, 10, 5,
                     ' to focus on them or to make them subtle when reading')
 
 display_pos(spacy_pos(text),
-            opacity=opacity)
-
+            opacity=opacity,
+            pos_style='search')
 
 
 
