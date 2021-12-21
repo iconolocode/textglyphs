@@ -42,7 +42,8 @@ def main():
         with st.expander('text editor', expanded=True):
             text = st.text_area(label='enter a text to analyze :',
                                 value=default_text, height=300,
-                                help='you can copy paste a text here')
+                                help='you can copy paste a text here '
+                                    'and collapse this box')
         st.form_submit_button(label='analyze',
                                     help='save the text in the box above')
 
@@ -50,8 +51,10 @@ def main():
 
     menu = ['\N{Jigsaw Puzzle Piece} parts of speech pattern view',
             '\N{Right-Pointing Magnifying Glass} parts of speech search filter',
-            '\N{Busts in Silhouette} named entities recognition']
+            '\N{Busts in Silhouette} named entities recognition',
+            'plain text']
 
+    
     st.sidebar.subheader('generate annotation')
     current = st.sidebar.radio('switch between filters', menu)
 
@@ -62,7 +65,7 @@ def main():
                     opacity=opacity,
                     pos_style='pattern')
 
-    if current == '\N{Right-Pointing Magnifying Glass} parts of speech search filter':
+    elif current == '\N{Right-Pointing Magnifying Glass} parts of speech search filter':
         opacity = opacity_ruler()
 
         display_pos(spacy_pos(text),
@@ -71,6 +74,9 @@ def main():
 
     elif current == '\N{Busts in Silhouette} named entities recognition':
         display_ner(spacy_ner(text))
+        
+    else: 
+        st.markdown(text.replace('\n\n', '\n---\n').replace('\n', '\n\n'))
 
 
 @st.cache(allow_output_mutation=True)
@@ -101,14 +107,14 @@ def display_ner(spacy_text):
                         'texts related to news, but also on conversations, weblogs,'
                         'religious texts.')
 
-        st.sidebar.info('*Tips for interpretation:* Are the pieces of information'
-                        'that are extracted important in the poem, or is their role'
+        st.sidebar.info('*Tips for interpretation:* Are the pieces of information '
+                        'that are extracted important in the poem, or is their role '
                         'more of one of ornaments to add detail to a text?' '\n\n'
-                        'If there are misclassifications, this could be due to the'
-                        'model not being trained for poetry. But there could also be'
-                        'other reasons that could have lead to this, such as the'
-                        'sentence structure or lexical context. It may be interesting'
-                        'to look at those, if they confuse the machine, what does'
+                        'If there are misclassifications, this could be due to the '
+                        'model not being trained for poetry. But there could also be '
+                        'other reasons that could have lead to this, such as the '
+                        'sentence structure or lexical context. It may be interesting '
+                        'to look at those, if they confuse the machine, what does '
                         'this mean for us?')
 
 
@@ -237,7 +243,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
 def opacity_ruler():
     opacity = st.sidebar.slider('Annotation presence', 0, 10, 5,
                                 help='You can make the annotations more vivid or discrete '
-                                'to focus on them or to make them subtle when reading')
+                                ' to focus on them or to make them subtle when reading')
     return opacity
 
 
