@@ -58,14 +58,14 @@ def main():
     st.sidebar.subheader('generate annotation')
     current = st.sidebar.radio('switch between filters', menu)
 
-    if current == '\N{Jigsaw Puzzle Piece} parts of speech pattern view':
+    if current == '\N{Jigsaw Puzzle Piece} part of speech pattern view':
         opacity = opacity_ruler()
 
         display_pos(spacy_pos(text),
                     opacity=opacity,
                     pos_style='pattern')
 
-    elif current == '\N{Right-Pointing Magnifying Glass} parts of speech search filter':
+    elif current == '\N{Right-Pointing Magnifying Glass} part of speech search filter':
         opacity = opacity_ruler()
 
         display_pos(spacy_pos(text),
