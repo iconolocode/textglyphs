@@ -49,8 +49,8 @@ def main():
 
     text = text.replace('      here is an example:', '')
 
-    menu = ['\N{Jigsaw Puzzle Piece} parts of speech pattern view',
-            '\N{Right-Pointing Magnifying Glass} parts of speech search filter',
+    menu = ['\N{Jigsaw Puzzle Piece} part of speech pattern view',
+            '\N{Right-Pointing Magnifying Glass} part of speech search filter',
             '\N{Busts in Silhouette} named entities recognition',
             'plain text']
 
