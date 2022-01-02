@@ -217,7 +217,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
             'nouns and pronouns': ['PROPN', 'NOUN', 'PRON'],
             'verbs and auxiliaries': ['VERB', 'AUX'],
             'adjectives, adverbs and adposition': ['ADJ', 'ADV', 'ADP'],
-            'conjuctions and particles': ['CONJ', 'ŚCONJ', 'CCONJ', 'PART'],
+            'conjuctions and particles': ['CONJ', 'SCONJ', 'CCONJ', 'PART'],
             'determiners': ['DET'],
             'interjections': ['INTJ'],
             'punctuaction and extra spaces': ['PUNCT', 'SPACE'],
