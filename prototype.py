@@ -66,22 +66,23 @@ def main():
     elif current == '\N{Jigsaw Puzzle Piece} part of speech pattern view':
         opacity = opacity_ruler()
 
-        display_pos(spacy_pos(text),
+        display_pos(spacy_pos(st.session_state.text),
                     opacity=opacity,
                     pos_style='pattern')
 
     elif current == '\N{Right-Pointing Magnifying Glass} part of speech search filter':
         opacity = opacity_ruler()
 
-        display_pos(spacy_pos(text),
+        display_pos(spacy_pos(st.session_state.text),
                     opacity=opacity,
                     pos_style='search')
 
     elif current == '\N{Busts in Silhouette} named entities recognition':
-        display_ner(spacy_ner(text))
+        display_ner(spacy_ner(st.session_state.text))
         
     else: 
-        st.markdown(text.replace('\n\n', '\n---\n').replace('\n', '\n\n'))
+        st.markdown(st.session_state.text.replace('\n\n', '\n---\n'
+                                                  ).replace('\n', '\n\n'))
 
 def home():
     st.title('Patterns in poetry tool')
@@ -89,15 +90,14 @@ def home():
 
     with st.form(key='text_form'):
         #with st.expander('Text editor', expanded=True):
-        text = st.text_area(label='Enter a text to analyze:',
-                            value=text, height=300,
+        st.session_state.text = st.text_area(label='Enter a text to analyze:',
+                            value=st.session_state.text, height=300,
                             help='You can copy paste a text here '
                                 'and collapse this box.')
         st.form_submit_button(label='Analyze',
                               help='Save the text in the box above.')
 
-    text = text.replace('      here is an example:', '')
-    default_text = text
+    st.session_state.text = st.session_state.text.replace('      here is an example:', '')
 
 
 @st.cache(allow_output_mutation=True)
