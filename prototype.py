@@ -207,37 +207,26 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
         'X': 'hsla(360, 100%, 100%, ' + alpha + ')'
     }
 
-    pos_cat = {
-        'nouns and pronouns': ['PROPN', 'NOUN', 'PRON'],
-        'verbs and auxiliaries': ['VERB', 'AUX'],
-        'adjectives, adverbs and adposition': ['ADJ', 'ADV', 'ADP'],
-        'conjuctions and particles': ['CONJ', 'ŚCONJ', 'CCONJ', 'PART'],
-        'determiners': ['DET'],
-        'interjections': ['INTJ'],
-        'punctuaction and extra spaces': ['PUNCT', 'SPACE'],
-        'numerals and special characters': ['NUM', 'SYM']
-    }
-
     pos_pattern_styling = """<mark class="entity" style="background: {bg}; width: 65px; padding: 0.5em 0.4em; line-height: 1em; border-radius: 0.2em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
     <span {text}, style="color: black; opacity: """ + str(1 - opacity/9)+"""">{label}</span></mark>"""
 
     pos_options = {"colors": pos_colors, 'template': pos_pattern_styling}
 
     if pos_style == 'search':
-        search_bar = st.sidebar.multiselect('Select the parts to focus on:',
-                                            pos_cat, default='nouns and pronouns',
+        pos_cat = {
+            'nouns and pronouns': ['PROPN', 'NOUN', 'PRON'],
+            'verbs and auxiliaries': ['VERB', 'AUX'],
+            'adjectives, adverbs and adposition': ['ADJ', 'ADV', 'ADP'],
+            'conjuctions and particles': ['CONJ', 'ŚCONJ', 'CCONJ', 'PART'],
+            'determiners': ['DET'],
+            'interjections': ['INTJ'],
+            'punctuaction and extra spaces': ['PUNCT', 'SPACE'],
+            'numerals and special characters': ['NUM', 'SYM']
+            }
+        
+        search_bar = st.sidebar.selectbox('Select the parts to focus on:',
+                                            options=pos_cat, index=0,
                                             help='TODO')
-        search_options = []
-        if len(search_bar) > 1:
-            for option in search_bar:
-                search_options += pos_cat[option]
-        elif len(search_bar) == 1:
-            search_options = pos_cat[search_bar[0]]
-        else:
-            search_options = ['']
-            sleep(1)
-            st.sidebar.error('unvalid selection')
-            st.error('unvalid selection')
         
         if opacity >= 5:
             label_type = '{label}'
@@ -250,7 +239,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
         <span style="font-weight: bold;">{text}</span><span style="font-size: """+str(0.5 + opacity/10/2)+"""em; font-family: sans-serif; color: white; margin-left: """+str(opacity/10/2)+"""rem;">"""+label_type+"""</span></mark>"""
             
         pos_options.update({'template': pos_search_styling})
-        pos_options.update({'ents': search_options})
+        pos_options.update({'ents': pos_cat[search_bar]})
 
     for verse in spacy_text['lines']:
         html = displacy.render(
