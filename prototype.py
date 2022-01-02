@@ -6,34 +6,32 @@ from spacy.matcher import Matcher
 from spacy.tokens import Span
 from time import sleep
 
-
-default_text = """      here is an example:
-A Drop Fell on the Apple Tree - 
-Another -  on the Roof - 
-A Half a Dozen kissed the Eaves - 
-And made the Gables laugh - 
-
-A few went out to help the Brook
-That went to help the Sea - 
-Myself Conjectured were they Pearls - 
-What Necklace could be - 
-
-The Dust replaced, in Hoisted Roads - 
-The Birds jocoser sung - 
-The Sunshine threw his Hat away - 
-The Bushes -  spangles flung - 
-
-The Breezes brought dejected Lutes - 
-And bathed them in the Glee - 
-Then Orient showed a single Flag,
-And signed the Fete away - """
-
-text = 'Error: no entered text'
-
 spacy_model = 'en_core_web_sm'
 
 wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.7rem; padding-left: 3em">{}</div>"""
 style = """<style>mark.entity { display: inline-block }</style>"""
+
+if 'text' not in st.session_state:
+    st.session_state.text = ('      here is an example:\n'
+                            'A Drop Fell on the Apple Tree - \n'
+                            'Another -  on the Roof - \n'
+                            'A Half a Dozen kissed the Eaves - \n'
+                            'And made the Gables laugh - \n'
+                            '\n'
+                            'A few went out to help the Brook\n'
+                            'That went to help the Sea - \n'
+                            'Myself Conjectured were they Pearls - \n'
+                            'What Necklace could be - \n'
+                            '\n'
+                            'The Dust replaced, in Hoisted Roads - \n'
+                            'The Birds jocoser sung - \n'
+                            'The Sunshine threw his Hat away - \n'
+                            'The Bushes -  spangles flung - \n'
+                            '\n'
+                            'The Breezes brought dejected Lutes - \n'
+                            'And bathed them in the Glee - \n'
+                            'Then Orient showed a single Flag,\n'
+                            'And signed the Fete away - ')
 
 def meta_data():
     st.set_page_config(
@@ -51,16 +49,6 @@ def meta_data():
 def main():
     meta_data()
 
-    with st.sidebar.form(key='text_form'):
-        with st.expander('Text editor', expanded=True):
-            text = st.text_area(label='Enter a text to analyze:',
-                                value=default_text, height=300,
-                                help='You can copy paste a text here '
-                                    'and collapse this box.')
-        st.form_submit_button(label='Analyze',
-                                    help='Save the text in the box above.')
-
-    text = text.replace('      here is an example:', '')
 
     menu = ['home',
             '\N{Jigsaw Puzzle Piece} part of speech pattern view',
@@ -97,6 +85,20 @@ def main():
 
 def home():
     st.title('Patterns in poetry tool')
+    
+
+    with st.form(key='text_form'):
+        #with st.expander('Text editor', expanded=True):
+        text = st.text_area(label='Enter a text to analyze:',
+                            value=text, height=300,
+                            help='You can copy paste a text here '
+                                'and collapse this box.')
+        st.form_submit_button(label='Analyze',
+                              help='Save the text in the box above.')
+
+    text = text.replace('      here is an example:', '')
+    default_text = text
+
 
 @st.cache(allow_output_mutation=True)
 def spacy_ner(text):
