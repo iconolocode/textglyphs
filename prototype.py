@@ -27,7 +27,7 @@ And bathed them in the Glee -
 Then Orient showed a single Flag,
 And signed the Fete away - """
 
-text = 'error: no entered text'
+text = 'Error: no entered text'
 
 spacy_model = 'en_core_web_sm'
 
@@ -39,13 +39,13 @@ def main():
     st.sidebar.title('Patterns in poetry tool')
 
     with st.sidebar.form(key='text_form'):
-        with st.expander('text editor', expanded=True):
-            text = st.text_area(label='enter a text to analyze :',
+        with st.expander('Text editor', expanded=True):
+            text = st.text_area(label='Enter a text to analyze:',
                                 value=default_text, height=300,
-                                help='you can copy paste a text here '
-                                    'and collapse this box')
-        st.form_submit_button(label='analyze',
-                                    help='save the text in the box above')
+                                help='You can copy paste a text here '
+                                    'and collapse this box.')
+        st.form_submit_button(label='Analyze',
+                                    help='Save the text in the box above.')
 
     text = text.replace('      here is an example:', '')
 
@@ -55,8 +55,8 @@ def main():
             'plain text']
 
     
-    st.sidebar.subheader('generate annotation')
-    current = st.sidebar.radio('switch between filters', menu)
+    st.sidebar.subheader('Generate annotations')
+    current = st.sidebar.radio('Switch between filters', menu)
 
     if current == '\N{Jigsaw Puzzle Piece} part of speech pattern view':
         opacity = opacity_ruler()
@@ -100,7 +100,7 @@ def display_ner(spacy_text):
 
     st.title('')
     st.caption(
-        f'     probability based annotations by spaCy model {spacy_model}')
+        f'     Probability based annotations by spaCy model {spacy_model}')
 
     with st.expander('More information (click here to hide)', expanded=True):
         st.sidebar.info('This model extracts key information. It is trained mostly on'
@@ -205,7 +205,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
     pos_options = {"colors": pos_colors, 'template': pos_pattern_styling}
 
     if pos_style == 'search':
-        search_bar = st.sidebar.multiselect('select the parts to focus on:',
+        search_bar = st.sidebar.multiselect('Select the parts to focus on:',
                                             pos_cat, default='nouns and pronouns',
                                             help='TODO')
         search_options = []
@@ -234,7 +234,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
 
     st.title('')
-    st.caption(f'probability based annotations by spaCy model {spacy_model}')
+    st.caption(f'Probability based annotations by spaCy model {spacy_model}')
 
     with st.expander('More information (click here to hide)', expanded=True):
         st.sidebar.info('*Tips for interpretation: TODO*')
