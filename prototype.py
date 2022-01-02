@@ -1,6 +1,7 @@
 import streamlit as st
 import spacy
 from spacy import displacy
+from spacy.displacy.templates import TPL_ENT as default_template
 from spacy.matcher import Matcher
 from spacy.tokens import Span
 from time import sleep
@@ -31,7 +32,7 @@ text = 'Error: no entered text'
 
 spacy_model = 'en_core_web_sm'
 
-wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.5rem; padding-left: 3em">{}</div>"""
+wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.7rem; padding-left: 3em">{}</div>"""
 style = """<style>mark.entity { display: inline-block }</style>"""
 
 
@@ -92,7 +93,9 @@ def display_ner(spacy_text):
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
-            style="ent"
+            style="ent",
+            options={'template': default_template.replace('border-radius: 0.35',
+                                                          'border-radius: 0.8')}
         )
 
         html = html.replace('\n', ' ')
@@ -199,7 +202,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
     pos_pattern_styling = """<mark class="entity" style="background: {bg}; width: 65px; padding: 0.5em 0.4em; line-height: 1em; border-radius: 0.2em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
     <span {text}, style="color: black; opacity: """ + str(1 - opacity/9)+"""">{label}</span></mark>"""
 
-    pos_search_styling = """<mark class="entity" style="background: linear-gradient(90deg, transparent, {bg}); padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 1em; border-radius: 0.8em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
+    pos_search_styling = """<mark class="entity" style="background: linear-gradient(90deg, transparent, {bg}); padding: 0.5em 0.4em; margin: 0 0.25em; line-height: 1em; border-radius: 0.2em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
     <span style="font-weight: bold">{text}</span><span style="color: white">{label}</span></mark>"""
 
     pos_options = {"colors": pos_colors, 'template': pos_pattern_styling}
