@@ -202,9 +202,6 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
     pos_pattern_styling = """<mark class="entity" style="background: {bg}; width: 65px; padding: 0.5em 0.4em; line-height: 1em; border-radius: 0.2em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
     <span {text}, style="color: black; opacity: """ + str(1 - opacity/9)+"""">{label}</span></mark>"""
 
-    pos_search_styling = """<mark class="entity" style="background: linear-gradient(90deg, transparent, {bg}); padding: 0.5em 0.4em; margin: 0 0.25em; line-height: 1em; border-radius: 0.2em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
-    <span style="font-weight: bold">{text}</span><span style="color: white">{label}</span></mark>"""
-
     pos_options = {"colors": pos_colors, 'template': pos_pattern_styling}
 
     if pos_style == 'search':
@@ -222,7 +219,17 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
             sleep(1)
             st.sidebar.error('unvalid selection')
             st.error('unvalid selection')
-
+        
+        if opacity >= 5:
+            label_type = '{label}'
+        elif opacity < 3:
+            label_type = ''
+        else:
+            label_type = '{label[0]}'
+    
+        pos_search_styling = """<mark class="entity" style="background: linear-gradient(90deg, transparent """+str(100 - opacity*15)+"""%, {bg}); padding: 0.5em 0.4em; margin: 0 0.25em; line-height: 1em; border-radius: 0.2em; box-decoration-break: clone; -webkit-box-decoration-break: clone">
+        <span style="font-weight: bold;">{text}</span><span style="font-size: """+str(0.5 + opacity/10/2)+"""em; font-family: sans-serif; color: white; margin-left: """+str(opacity/10/2)+"""rem;">"""+label_type+"""</span></mark>"""
+            
         pos_options.update({'template': pos_search_styling})
         pos_options.update({'ents': search_options})
 
