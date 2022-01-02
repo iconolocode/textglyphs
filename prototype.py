@@ -35,8 +35,22 @@ spacy_model = 'en_core_web_sm'
 wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.7rem; padding-left: 3em">{}</div>"""
 style = """<style>mark.entity { display: inline-block }</style>"""
 
+def meta_data():
+    st.set_page_config(
+     page_title='Poetry Patterns',
+     page_icon=':scroll:',
+     layout='wide',
+     initial_sidebar_state='expanded',
+     menu_items={
+         'Get Help': 'https://www.extremelycoolapp.com/help',
+         'Report a bug': 'https://twitter.com/iconolocode',
+         'About': 'TODO: add abstract here'
+     }
+ )
 
 def main():
+    meta_data()
+    
     st.sidebar.title('Patterns in poetry tool')
 
     with st.sidebar.form(key='text_form'):
@@ -89,7 +103,6 @@ def spacy_ner(text):
 
 
 def display_ner(spacy_text):
-
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
