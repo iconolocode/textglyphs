@@ -199,7 +199,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
         'CONJ': 'hsla(14, 90%, 70%, ' + alpha + ')',
         'CCONJ': 'hsla(14, 90%, 70%, ' + alpha + ')',
         'SCONJ': 'hsla(14, 90%, 70%, ' + alpha + ')',
-        'DET': 'hsla(330, 50%, 90%, ' + alpha + ')',
+        'DET': 'hsla(330, 35%, 80%, ' + alpha + ')',
         'PART': 'hsla(350, 70%, 80%, ' + alpha + ')',
         'INTJ': 'hsla(50, 100%, 60%, ' + alpha + ')',
         'PROPN': 'hsla(220, 100%, 60%, ' + alpha + ')',
