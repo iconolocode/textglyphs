@@ -232,26 +232,26 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
         search_bar = st.sidebar.selectbox('Select the parts to focus on:',
                                             options=pos_cat,
                                             format_func=lambda option: option +
-                                            ' ' + str(sum([1 for ent
+                                            ' ' + str(sum([1 for pos
                                                 in spacy_text['text'].ents
-                                            if ent.label_ in pos_cat[option]])),
+                                            if pos.label_ in pos_cat[option]])),
                                             help='TODO')
         
-        ent_selection = pos_cat[search_bar]
+        pos_selection = pos_cat[search_bar]
         
-        if sum([1 for ent in spacy_text['text'].ents if ent.label_
+        if sum([1 for pos in spacy_text['text'].ents if pos.label_
                 in pos_cat[search_bar]]) == 0:
             st.sidebar.warning('unvalid selection, no text to annotate found')
         
         if st.sidebar.checkbox('advanced selection:', help='TODO'):
-            all_ents = set([ent.label_ for ent in spacy_text['text'].ents])
+            all_pos = set([pos.label_ for pos in spacy_text['text'].ents])
             extra_bar = st.sidebar.multiselect('Select the parts to focus on:',
-                        all_ents,
+                        all_pos,
                         default=list(set(pos_cat[search_bar])
-                                     .intersection(all_ents)),
+                                     .intersection(all_pos)),
                         help='TODO')
 
-            ent_selection = pos_cat[search_bar] + extra_bar
+            pos_selection = extra_bar
         
         
         if opacity >= 5:
@@ -265,7 +265,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
         <span style="font-weight: bold;">{text}</span><span style="font-size: """+str(0.5 + opacity/10/2)+"""em; font-family: sans-serif; color: white; margin-left: """+str(opacity/10/2)+"""rem;">"""+label_type+"""</span></mark>"""
             
         pos_options.update({'template': pos_search_styling})
-        pos_options.update({'ents': ent_selection})
+        pos_options.update({'ents': pos_selection})
 
     for verse in spacy_text['lines']:
         html = displacy.render(
