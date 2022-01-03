@@ -11,8 +11,7 @@ wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: au
 style = """<style>mark.entity { display: inline-block }</style>"""
 
 if 'text' not in st.session_state:
-    st.session_state.text = ('      here is an example:\n'
-                            'A Drop Fell on the Apple Tree - \n'
+    st.session_state.text = ('A Drop Fell on the Apple Tree - \n'
                             'Another -  on the Roof - \n'
                             'A Half a Dozen kissed the Eaves - \n'
                             'And made the Gables laugh - \n'
@@ -113,8 +112,6 @@ def home():
                                 'and collapse this box.')
         st.form_submit_button(label='Analyze',
                               help='Save the text in the box above.')
-
-    st.session_state.text = st.session_state.text.replace('      here is an example:', '')
 
 
 @st.cache(allow_output_mutation=True)
@@ -446,7 +443,14 @@ def display_persons(spacy_text, opacity = 5):
                     'PL': 'linear-gradient(0deg, hsla(55, 95%, 50%, '+ alpha +') 15%, transparent 20%)',
                     '1 PL': 'linear-gradient(0deg, hsla(40, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
                     '2 PL': 'linear-gradient(0deg, hsla(0, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
-                    '3 PL': 'linear-gradient(0deg, hsla(310, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
+                    '3 PL': 'linear-gradient(0deg, hsla(310, 100%, 50%, '+ alpha +') 15%, transparent 20%)','SING': 'linear-gradient(0deg, hsla(120, 0%, 90%, '+ alpha +') 15%, transparent 20%)',
+                    '1 SING': 'linear-gradient(0deg, hsla(120, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
+                    '2 SING': 'linear-gradient(0deg, hsla(200, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
+                    '3 SING': 'linear-gradient(0deg, hsla(220, 100%, 60%, '+ alpha +') 15%, transparent 20%)',
+                    'PLUR': 'linear-gradient(0deg, hsla(55, 95%, 50%, '+ alpha +') 15%, transparent 20%)',
+                    '1 PLUR': 'linear-gradient(0deg, hsla(40, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
+                    '2 PLUR': 'linear-gradient(0deg, hsla(0, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
+                    '3 PLUR': 'linear-gradient(0deg, hsla(310, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
                     '2': 'linear-gradient(0deg, hsla(310, 0%, 50%, '+ alpha +') 15%, transparent 20%)'}
     
     for verse in spacy_text['lines']:
