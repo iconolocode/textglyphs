@@ -129,9 +129,9 @@ def home():
 
 @st.cache(allow_output_mutation=True)
 def spacy_ner(text):
-    ner = spacy.load(spacy_model)
-    full_text = ner(text)
-    verses = [ner(verse) for verse in text.split('\n')]
+    ner_nlp = spacy.load(spacy_model)
+    full_text = ner_nlp(text)
+    verses = [ner_nlp(verse) for verse in text.split('\n')]
     return {'text': full_text, 'lines': verses}
 
 
@@ -169,9 +169,9 @@ def display_ner(spacy_text):
 
 @st.cache(allow_output_mutation=True)
 def spacy_pos(text):
-    pos = spacy.load(spacy_model, disable=["ner"])
-    full_text = pos(text)
-    verses = [pos(verse) for verse in text.split('\n')]
+    pos_nlp = spacy.load(spacy_model, disable=["ner"])
+    full_text = pos_nlp(text)
+    verses = [pos_nlp(verse) for verse in text.split('\n')]
 
     patterns = [
         [{'POS': 'ADJ'}],
@@ -195,7 +195,7 @@ def spacy_pos(text):
         [{'POS': 'SCONJ'}]
     ]
 
-    matcher = Matcher(pos.vocab)
+    matcher = Matcher(pos_nlp.vocab)
     for pattern in patterns:
         matcher.add(key=pattern[0]['POS'], patterns=[pattern])
 
@@ -245,7 +245,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
     pos_options = {"colors": pos_colors, 'template': pos_pattern_styling}
 
     if pos_style == 'search':
-        pos_cat = {
+        pos_categories = {
             'nouns and pronouns': ['PROPN', 'NOUN', 'PRON'],
             'verbs and auxiliaries': ['VERB', 'AUX'],
             'adjectives, adverbs and adposition': ['ADJ', 'ADV', 'ADP'],
@@ -257,24 +257,24 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
             }
         
         search_bar = st.sidebar.selectbox('Select the parts to focus on:',
-                                            options=pos_cat,
+                                            options=pos_categories,
                                             format_func=lambda option: option +
                                             ' ' + str(sum([1 for pos
                                                 in spacy_text['text'].ents
-                                            if pos.label_ in pos_cat[option]])),
+                                            if pos.label_ in pos_categories[option]])),
                                             help='TODO')
         
-        pos_selection = pos_cat[search_bar]
+        pos_selection = pos_categories[search_bar]
         
         if sum([1 for pos in spacy_text['text'].ents if pos.label_
-                in pos_cat[search_bar]]) == 0:
+                in pos_categories[search_bar]]) == 0:
             st.sidebar.warning('unvalid selection, no text to annotate found')
         
         if st.sidebar.checkbox('advanced selection:', help='TODO'):
             all_pos = set([pos.label_ for pos in spacy_text['text'].ents])
             extra_bar = st.sidebar.multiselect('Select the parts to focus on:',
                         all_pos,
-                        default=list(set(pos_cat[search_bar])
+                        default=list(set(pos_categories[search_bar])
                                      .intersection(all_pos)),
                         help='TODO')
 
@@ -310,14 +310,15 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
     with st.expander('More information (click here to hide)', expanded=True):
         st.sidebar.info('*Tips for interpretation: TODO*')
 
+
 @st.cache(allow_output_mutation=True)
 def spacy_tenses(text):
     
-    tenses = spacy.load(spacy_model, disable=["ner"])
-    full_text = tenses(text)
-    verses = [tenses(verse) for verse in text.split('\n')]
+    tenses_nlp = spacy.load(spacy_model, disable=["ner"])
+    full_text = tenses_nlp(text)
+    verses = [tenses_nlp(verse) for verse in text.split('\n')]
 
-    matcher = Matcher(tenses.vocab)
+    matcher = Matcher(tenses_nlp.vocab)
     
     for token in full_text:
         if token.pos_ == 'VERB':
@@ -362,11 +363,11 @@ def display_tenses(spacy_text):
 @st.cache(allow_output_mutation=True)        
 def spacy_quantity(text):
     
-    tenses = spacy.load(spacy_model, disable=["ner"])
-    full_text = tenses(text)
-    verses = [tenses(verse) for verse in text.split('\n')]
+    quantity_nlp = spacy.load(spacy_model, disable=["ner"])
+    full_text = quantity_nlp(text)
+    verses = [quantity_nlp(verse) for verse in text.split('\n')]
 
-    matcher = Matcher(tenses.vocab)
+    matcher = Matcher(quantity_nlp.vocab)
     
     for token in full_text:
         number = token.morph.get("Number")
@@ -390,14 +391,14 @@ def display_quantity(spacy_text, opacity = 5):
     
     alpha = str(opacity / 10)
     
-    time_colors =  {'SING': 'hsla(120, 0%, 70%, '+ alpha +')',
+    quantity_colors =  {'SING': 'hsla(120, 0%, 70%, '+ alpha +')',
                     'PLUR': 'hsla(55, 95%, 50%, '+ alpha +')'}
     
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
             style="ent",
-            options={'colors': time_colors, 'template':
+            options={'colors': quantity_colors, 'template':
                      default_template.replace('border-radius: 0.35',
                                               'border-radius: 0.9')}
             )
@@ -410,11 +411,11 @@ def display_quantity(spacy_text, opacity = 5):
 @st.cache(allow_output_mutation=True)        
 def spacy_persons(text):
     
-    tenses = spacy.load(spacy_model, disable=["ner"])
-    full_text = tenses(text)
-    verses = [tenses(verse) for verse in text.split('\n')]
+    persons_nlp = spacy.load(spacy_model, disable=["ner"])
+    full_text = persons_nlp(text)
+    verses = [persons_nlp(verse) for verse in text.split('\n')]
 
-    matcher = Matcher(tenses.vocab)
+    matcher = Matcher(persons_nlp.vocab)
     
     text_to_num = {'first': '1', 'second': '2', 'third': '3',
                    'one': '1', 'two': '2', 'three': '3'}
@@ -480,13 +481,12 @@ def display_persons(spacy_text, opacity = 5):
 @st.cache(allow_output_mutation=True)        
 def spacy_sentiments(text):
     
-    sentiments = spacy.load(spacy_model, disable=["ner"])
-    sentiments.add_pipe('spacytextblob')
-    print(sentiments.pipe_names)
-    full_text = sentiments(text)
-    verses = [sentiments(verse) for verse in text.split('\n')]
+    sentiments_nlp = spacy.load(spacy_model, disable=["ner"])
+    sentiments_nlp.add_pipe('spacytextblob')
+    full_text = sentiments_nlp(text)
+    verses = [sentiments_nlp(verse) for verse in text.split('\n')]
 
-    matcher = Matcher(sentiments.vocab)
+    matcher = Matcher(sentiments_nlp.vocab)
     
     for token in full_text:
         if token._.polarity != 0:
@@ -506,19 +506,21 @@ def display_sentiments(spacy_text, opacity = 5):
     
     alpha = str(opacity / 10)
     
-    sent_colors = {}
+    sentiments_colors = {}
 
     for i in range(-10,11):
         if i > 0:
-            sent_colors.update({str(round(i/10, 1)): f"hsla(100, 100%, {80 - i * 5}%, {alpha})"})
+            sentiments_colors.update({str(round(i/10, 1)):
+                                    f"hsla(100, 100%, {80 - i * 5}%, {alpha})"})
         if i < 0:
-            sent_colors.update({str(round(i/10, 1)): f"hsla({40 - abs(i) * 4}, 100%, {80 - abs(i) * 3}%, {alpha})"})
+            sentiments_colors.update({str(round(i/10, 1)): 
+                                    f"hsla({40 - abs(i) * 4}, 100%, {80 - abs(i) * 3}%, {alpha})"})
         
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
             style="ent",
-            options={'colors': sent_colors}
+            options={'colors': sentiments_colors}
             )
         
         html = html.replace('\n', ' ')
