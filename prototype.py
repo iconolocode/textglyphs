@@ -237,9 +237,21 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
                                             if ent.label_ in pos_cat[option]])),
                                             help='TODO')
         
+        ent_selection = pos_cat[search_bar]
+        
         if sum([1 for ent in spacy_text['text'].ents if ent.label_
                 in pos_cat[search_bar]]) == 0:
             st.sidebar.warning('unvalid selection, no text to annotate found')
+        
+        if st.sidebar.checkbox('advanced selection:', help='TODO'):
+            all_ents = set([ent.label_ for ent in spacy_text['text'].ents])
+            extra_bar = st.sidebar.multiselect('Select the parts to focus on:',
+                        all_ents,
+                        default=list(set(pos_cat[search_bar])
+                                     .intersection(all_ents)),
+                        help='TODO')
+
+            ent_selection = pos_cat[search_bar] + extra_bar
         
         
         if opacity >= 5:
@@ -253,7 +265,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
         <span style="font-weight: bold;">{text}</span><span style="font-size: """+str(0.5 + opacity/10/2)+"""em; font-family: sans-serif; color: white; margin-left: """+str(opacity/10/2)+"""rem;">"""+label_type+"""</span></mark>"""
             
         pos_options.update({'template': pos_search_styling})
-        pos_options.update({'ents': pos_cat[search_bar]})
+        pos_options.update({'ents': ent_selection})
 
     for verse in spacy_text['lines']:
         html = displacy.render(
