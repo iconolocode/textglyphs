@@ -4,7 +4,6 @@ from spacy import displacy
 from spacy.displacy.templates import TPL_ENT as default_template
 from spacy.matcher import Matcher
 from spacy.tokens import Span
-from time import sleep
 
 spacy_model = 'en_core_web_sm'
 
@@ -54,6 +53,9 @@ def main():
             '\N{Jigsaw Puzzle Piece} part of speech pattern view',
             '\N{Right-Pointing Magnifying Glass} part of speech search filter',
             '\N{Busts in Silhouette} named entities recognition',
+            '\N{Hourglass with Flowing Sand} tenses',
+            'quantities',
+            'persons',
             'plain text']
 
     
@@ -79,6 +81,21 @@ def main():
 
     elif current == '\N{Busts in Silhouette} named entities recognition':
         display_ner(spacy_ner(st.session_state.text))
+        
+    elif current == '\N{Hourglass with Flowing Sand} tenses':
+        display_tenses(spacy_tenses(st.session_state.text))
+        
+    elif current == 'quantities':
+        opacity = opacity_ruler()
+
+        display_quantity(spacy_quantity(st.session_state.text),
+                    opacity=opacity)
+        
+    elif current == 'persons':
+        opacity = opacity_ruler()
+
+        display_persons(spacy_persons(st.session_state.text),
+                    opacity=opacity)
         
     else: 
         st.markdown(st.session_state.text.replace('\n\n', '\n---\n'
@@ -113,9 +130,9 @@ def display_ner(spacy_text):
         html = displacy.render(
             verse,
             style="ent",
-            options={'template': default_template.replace('border-radius: 0.35',
-                                                          'border-radius: 0.8')}
-        )
+            options={'template': default_template.replace('border-radius',
+                    'border:0.1rem solid hsla(0, 0%, 0%, 0.2); border-radius')}
+            )
 
         html = html.replace('\n', ' ')
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
@@ -282,6 +299,166 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
 
     with st.expander('More information (click here to hide)', expanded=True):
         st.sidebar.info('*Tips for interpretation: TODO*')
+
+@st.cache(allow_output_mutation=True)
+def spacy_tenses(text):
+    
+    tenses = spacy.load(spacy_model, disable=["ner"])
+    full_text = tenses(text)
+    verses = [tenses(verse) for verse in text.split('\n')]
+
+    matcher = Matcher(tenses.vocab)
+    
+    for token in full_text:
+        if token.pos_ == 'VERB':
+            tense = token.morph.get("Tense")
+            if tense:
+                label = tense[0].upper()
+                if label == 'PRES':
+                    label = 'PRESENT'
+                matcher.add(label, patterns=[[{'MORPH': str(token.morph)}]])
+            else:
+                matcher.add('OTHER', patterns=[[{'MORPH': str(token.morph)}]])
+    
+    for verse in verses:
+        matches = matcher(verse)
+        for match_id, start, end in matches:
+            new_ent = Span(verse, start, end, label=match_id)
+            verse.ents = list(verse.ents) + [new_ent]
+            
+
+    return {'text': full_text, 'lines': verses}
+
+
+def display_tenses(spacy_text):
+    
+    time_colors = {'OTHER': 'linear-gradient(90deg, transparent, lightBlue)',
+                   'PAST': 'linear-gradient(90deg, orange, transparent)',
+                   'PRESENT': 'linear-gradient(0deg, yellow, transparent)'}
+    
+    for verse in spacy_text['lines']:
+        html = displacy.render(
+            verse,
+            style="ent",
+            options={'colors': time_colors, 'template':
+                     default_template.replace('border-radius: 0.35',
+                                              'border-radius: 0.9')}
+            )
+
+        html = html.replace('\n', ' ')
+        st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
+        
+        
+@st.cache(allow_output_mutation=True)        
+def spacy_quantity(text):
+    
+    tenses = spacy.load(spacy_model, disable=["ner"])
+    full_text = tenses(text)
+    verses = [tenses(verse) for verse in text.split('\n')]
+
+    matcher = Matcher(tenses.vocab)
+    
+    for token in full_text:
+        number = token.morph.get("Number")
+        
+        if number:
+            label = number[0].upper()
+            matcher.add(label, patterns=[[{'MORPH': str(token.morph)}]])
+    
+        
+    for verse in verses:
+        matches = matcher(verse)
+        for match_id, start, end in matches:
+            new_ent = Span(verse, start, end, label=match_id)
+            verse.ents = list(verse.ents) + [new_ent]
+            
+
+    return {'text': full_text, 'lines': verses}
+
+
+def display_quantity(spacy_text, opacity = 5):
+    
+    alpha = str(opacity / 10)
+    
+    time_colors =  {'SING': 'hsla(120, 0%, 70%, '+ alpha +')',
+                    'PLUR': 'hsla(55, 95%, 50%, '+ alpha +')'}
+    
+    for verse in spacy_text['lines']:
+        html = displacy.render(
+            verse,
+            style="ent",
+            options={'colors': time_colors, 'template':
+                     default_template.replace('border-radius: 0.35',
+                                              'border-radius: 0.9')}
+            )
+  
+        
+        html = html.replace('\n', ' ')
+        st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
+
+
+@st.cache(allow_output_mutation=True)        
+def spacy_persons(text):
+    
+    tenses = spacy.load(spacy_model, disable=["ner"])
+    full_text = tenses(text)
+    verses = [tenses(verse) for verse in text.split('\n')]
+
+    matcher = Matcher(tenses.vocab)
+    
+    text_to_num = {'first': '1', 'second': '2', 'third': '3',
+                   'one': '1', 'two': '2', 'three': '3'}
+    abbreviate = {'SING': 'SG', 'PLUR': 'PL'}
+    
+    for token in full_text:
+        person = token.morph.get('Person')
+        number = token.morph.get('Number')
+        
+        if person and person[0].isalpha():
+            person = [text_to_num[person[0].lower()]]
+            
+        if number:
+            number = [abbreviate[number[0].upper()]]
+
+        if not person == []:
+            label = ' '.join(person + number).upper()
+            matcher.add(label, patterns=[[{'MORPH': str(token.morph)}]])
+        
+        
+    for verse in verses:
+        matches = matcher(verse)
+        for match_id, start, end in matches:
+            new_ent = Span(verse, start, end, label=match_id)
+            verse.ents = list(verse.ents) + [new_ent]
+            
+
+    return {'text': full_text, 'lines': verses}
+
+
+def display_persons(spacy_text, opacity = 5):
+    
+    alpha = str(opacity / 10)
+    
+    pers_colors = {'SG': 'linear-gradient(0deg, hsla(120, 0%, 90%, '+ alpha +') 15%, transparent 20%)',
+                    '1 SG': 'linear-gradient(0deg, hsla(120, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
+                    '2 SG': 'linear-gradient(0deg, hsla(200, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
+                    '3 SG': 'linear-gradient(0deg, hsla(220, 100%, 60%, '+ alpha +') 15%, transparent 20%)',
+                    'PL': 'linear-gradient(0deg, hsla(55, 95%, 50%, '+ alpha +') 15%, transparent 20%)',
+                    '1 PL': 'linear-gradient(0deg, hsla(40, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
+                    '2 PL': 'linear-gradient(0deg, hsla(0, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
+                    '3 PL': 'linear-gradient(0deg, hsla(310, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
+                    '2': 'linear-gradient(0deg, hsla(310, 0%, 50%, '+ alpha +') 15%, transparent 20%)'}
+    
+    for verse in spacy_text['lines']:
+        html = displacy.render(
+            verse,
+            style="ent",
+            options={'colors': pers_colors}
+            )
+        
+        html = html.replace('\n', ' ')
+        st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
+
 
 
 def opacity_ruler():
