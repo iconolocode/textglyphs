@@ -4,8 +4,14 @@ from spacy import displacy
 from spacy.displacy.templates import TPL_ENT as default_template
 from spacy.matcher import Matcher
 from spacy.tokens import Span
+import subprocess
+from spacytextblob.spacytextblob import SpacyTextBlob
 
 spacy_model = 'en_core_web_sm'
+
+if 'textblob' not in st.session_state:
+    subprocess.run(['python3', '-m', 'textblob.download_corpora'])
+    st.session_state.textblob = True
 
 wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: auto; border: 0px; border-radius: 0.7rem; padding-left: 3em">{}</div>"""
 style = """<style>mark.entity { display: inline-block }</style>"""
@@ -55,6 +61,7 @@ def main():
             '\N{Hourglass with Flowing Sand} tenses',
             'quantities',
             'persons',
+            'sentiments',
             'plain text']
 
     
@@ -94,6 +101,12 @@ def main():
         opacity = opacity_ruler()
 
         display_persons(spacy_persons(st.session_state.text),
+                    opacity=opacity)
+        
+    elif current == 'sentiments':
+        opacity = opacity_ruler()
+
+        display_sentiments(spacy_sentiments(st.session_state.text),
                     opacity=opacity)
         
     else: 
@@ -458,6 +471,54 @@ def display_persons(spacy_text, opacity = 5):
             verse,
             style="ent",
             options={'colors': pers_colors}
+            )
+        
+        html = html.replace('\n', ' ')
+        st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
+
+
+@st.cache(allow_output_mutation=True)        
+def spacy_sentiments(text):
+    
+    sentiments = spacy.load(spacy_model, disable=["ner"])
+    sentiments.add_pipe('spacytextblob')
+    print(sentiments.pipe_names)
+    full_text = sentiments(text)
+    verses = [sentiments(verse) for verse in text.split('\n')]
+
+    matcher = Matcher(sentiments.vocab)
+    
+    for token in full_text:
+        if token._.polarity != 0:
+            label = str(round(token._.polarity, 1))
+            matcher.add(key=label, patterns=[[{'TEXT': token.text}]])
+        
+    for verse in verses:
+        matches = matcher(verse)
+        for match_id, start, end in matches:
+            new_ent = Span(verse, start, end, label=match_id)
+            verse.ents = list(verse.ents) + [new_ent]
+
+    return {'text': full_text, 'lines': verses}
+
+
+def display_sentiments(spacy_text, opacity = 5):
+    
+    alpha = str(opacity / 10)
+    
+    sent_colors = {}
+
+    for i in range(-10,11):
+        if i > 0:
+            sent_colors.update({str(round(i/10, 1)): f"hsla(100, 100%, {80 - i * 5}%, {alpha})"})
+        if i < 0:
+            sent_colors.update({str(round(i/10, 1)): f"hsla({40 - abs(i) * 4}, 100%, {80 - abs(i) * 3}%, {alpha})"})
+        
+    for verse in spacy_text['lines']:
+        html = displacy.render(
+            verse,
+            style="ent",
+            options={'colors': sent_colors}
             )
         
         html = html.replace('\n', ' ')
