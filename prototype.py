@@ -2,7 +2,7 @@ import streamlit as st
 import spacy
 from spacy import displacy
 from spacy.displacy.templates import TPL_ENT as default_template
-from spacy.matcher import Matcher
+from spacy.matcher import Matcher, PhraseMatcher
 from spacy.tokens import Span
 import subprocess
 from spacytextblob.spacytextblob import SpacyTextBlob
@@ -62,6 +62,7 @@ def main():
             'quantities',
             'persons',
             'sentiments',
+            'subjectivity', 
             'plain text']
 
     
@@ -109,6 +110,12 @@ def main():
         display_sentiments(spacy_sentiments(st.session_state.text),
                     opacity=opacity)
         
+    elif current == 'subjectivity':
+        opacity = opacity_ruler()
+        
+        display_subjectivity(spacy_subjectivity(st.session_state.text),
+                    opacity=opacity)
+        
     else: 
         st.markdown(st.session_state.text.replace('\n\n', '\n---\n'
                                                   ).replace('\n', '\n\n'))
@@ -139,7 +146,7 @@ def display_ner(spacy_text):
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
-            style="ent",
+            style='ent',
             options={'template': default_template.replace('border-radius',
                     'border:0.1rem solid hsla(0, 0%, 0%, 0.2); border-radius')}
             )
@@ -297,7 +304,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
-            style="ent",
+            style='ent',
             options=pos_options
         )
 
@@ -350,7 +357,7 @@ def display_tenses(spacy_text):
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
-            style="ent",
+            style='ent',
             options={'colors': time_colors, 'template':
                      default_template.replace('border-radius: 0.35',
                                               'border-radius: 0.9')}
@@ -397,7 +404,7 @@ def display_quantity(spacy_text, opacity = 5):
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
-            style="ent",
+            style='ent',
             options={'colors': quantity_colors, 'template':
                      default_template.replace('border-radius: 0.35',
                                               'border-radius: 0.9')}
@@ -470,7 +477,7 @@ def display_persons(spacy_text, opacity = 5):
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
-            style="ent",
+            style='ent',
             options={'colors': pers_colors}
             )
         
@@ -519,12 +526,60 @@ def display_sentiments(spacy_text, opacity = 5):
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
-            style="ent",
+            style='ent',
             options={'colors': sentiments_colors}
             )
         
         html = html.replace('\n', ' ')
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
+
+
+@st.cache(allow_output_mutation=True)        
+def spacy_subjectivity(text):
+    
+    subjectivity_nlp = spacy.load(spacy_model, disable=["ner"])
+    subjectivity_nlp.add_pipe('spacytextblob')
+    full_text = subjectivity_nlp(text)
+    verses = [subjectivity_nlp(verse) for verse in text.split('\n')]
+
+    matcher = PhraseMatcher(subjectivity_nlp.vocab)
+    
+    for line in full_text.sents:
+        if line._.subjectivity:
+            score = line._.subjectivity
+            label = str(round(score, 1))
+            text = line.text.replace('\n', '')
+            matcher.add(key=label, docs=[subjectivity_nlp(text)])
+        
+        
+    for verse in verses:
+        matches = matcher(verse)
+        for match_id, start, end in matches:
+            new_ent = Span(verse, start, end, label=match_id)
+            verse.ents = list(verse.ents) + [new_ent]
+
+    return {'text': full_text, 'lines': verses}
+
+
+def display_subjectivity(spacy_text, opacity = 5):
+    alpha = str(opacity / 10)
+    
+    subjectivity_colors = {}
+
+    for i in range(0,11):
+        subjectivity_colors.update({str(round(i/10, 1)):
+                                f"hsla({250 + i * 5}, 100%, {100 - i * 4}%, {alpha})"})
+
+    for verse in spacy_text['lines']:
+        html = displacy.render(
+            verse,
+            style='ent',
+            options={'colors': subjectivity_colors}
+            )
+        
+        html = html.replace('\n', ' ')
+        st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
+
 
 
 
