@@ -177,6 +177,11 @@ def spacy_pos(text):
         for id, start, end in matches:
             new_ent = Span(verse, start, end, label=id)
             verse.ents = list(verse.ents) + [new_ent]
+            
+    matches = matcher(full_text)
+    for id, start, end in matches:
+        new_ent = Span(full_text, start, end, label=id)
+        full_text.ents = list(full_text.ents) + [new_ent]
 
     return {'text': full_text, 'lines': verses}
 
@@ -226,8 +231,12 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
         
         search_bar = st.sidebar.selectbox('Select the parts to focus on:',
                                             options=pos_cat, index=0,
+                                            format_func=lambda option: option +
+                                            ' ' + str(sum([1 for ent
+                                                in spacy_text['text'].ents
+                                            if ent.label_ in pos_cat[option]])),
                                             help='TODO')
-        
+
         if opacity >= 5:
             label_type = '{label}'
         elif opacity < 3:
