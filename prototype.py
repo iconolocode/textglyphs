@@ -230,13 +230,18 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
             }
         
         search_bar = st.sidebar.selectbox('Select the parts to focus on:',
-                                            options=pos_cat, index=0,
+                                            options=pos_cat,
                                             format_func=lambda option: option +
                                             ' ' + str(sum([1 for ent
                                                 in spacy_text['text'].ents
                                             if ent.label_ in pos_cat[option]])),
                                             help='TODO')
-
+        
+        if sum([1 for ent in spacy_text['text'].ents if ent.label_
+                in pos_cat[search_bar]]) == 0:
+            st.sidebar.warning('unvalid selection, no text to annotate found')
+        
+        
         if opacity >= 5:
             label_type = '{label}'
         elif opacity < 3:
