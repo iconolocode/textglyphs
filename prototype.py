@@ -450,7 +450,7 @@ def display_quantity(spacy_text, opacity = 5):
         
         html = html.replace('\n', ' ')
         
-        if opacity > 3 and opacity < 8:
+        if opacity >= 4 and opacity < 8:
             html = html.replace('SING', 'SG').replace('PLUR', 'PL')
             
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
@@ -467,7 +467,6 @@ def spacy_persons(text):
     
     text_to_num = {'first': '1', 'second': '2', 'third': '3',
                    'one': '1', 'two': '2', 'three': '3'}
-    abbreviate = {'SING': 'SG', 'PLUR': 'PL'}
     
     for token in full_text:
         person = token.morph.get('Person')
@@ -476,8 +475,6 @@ def spacy_persons(text):
         if person and person[0].isalpha():
             person = [text_to_num[person[0].lower()]]
             
-        if number:
-            number = [abbreviate[number[0].upper()]]
 
         if not person == []:
             label = ' '.join(person + number).upper()
@@ -495,18 +492,16 @@ def spacy_persons(text):
 
 
 def display_persons(spacy_text, opacity = 5):
+    template = default_template.replace('padding: 0.45em 0.6em', 'padding: 0.3em'
+                            ).replace(' margin-left: 0.5rem', ' margin-left: 0.2rem')
+    
+    if opacity < 3:
+        template = template[:template.find('<span style=')] + '</mark>'
     
     alpha = str(opacity / 10)
     
-    pers_colors = {'SG': 'linear-gradient(0deg, hsla(120, 0%, 90%, '+ alpha +') 15%, transparent 20%)',
-                    '1 SG': 'linear-gradient(0deg, hsla(120, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
-                    '2 SG': 'linear-gradient(0deg, hsla(200, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
-                    '3 SG': 'linear-gradient(0deg, hsla(220, 100%, 60%, '+ alpha +') 15%, transparent 20%)',
-                    'PL': 'linear-gradient(0deg, hsla(55, 95%, 50%, '+ alpha +') 15%, transparent 20%)',
-                    '1 PL': 'linear-gradient(0deg, hsla(40, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
-                    '2 PL': 'linear-gradient(0deg, hsla(0, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
-                    '3 PL': 'linear-gradient(0deg, hsla(310, 100%, 50%, '+ alpha +') 15%, transparent 20%)','SING': 'linear-gradient(0deg, hsla(120, 0%, 90%, '+ alpha +') 15%, transparent 20%)',
-                    '1 SING': 'linear-gradient(0deg, hsla(120, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
+    pers_colors = {'SINGG': 'linear-gradient(0deg, hsla(120, 0%, 90%, '+ alpha +') 15%, transparent 20%)',
+                   '1 SING': 'linear-gradient(0deg, hsla(120, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
                     '2 SING': 'linear-gradient(0deg, hsla(200, 100%, 50%, '+ alpha +') 15%, transparent 20%)',
                     '3 SING': 'linear-gradient(0deg, hsla(220, 100%, 60%, '+ alpha +') 15%, transparent 20%)',
                     'PLUR': 'linear-gradient(0deg, hsla(55, 95%, 50%, '+ alpha +') 15%, transparent 20%)',
@@ -519,8 +514,11 @@ def display_persons(spacy_text, opacity = 5):
         html = displacy.render(
             verse,
             style='ent',
-            options={'colors': pers_colors}
+            options={'colors': pers_colors, 'template': template}
             )
+        
+        if opacity >= 3 and opacity < 8:
+            html = html.replace('SING', 'SG').replace('PLUR', 'PL')
         
         html = html.replace('\n', ' ')
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
@@ -551,24 +549,31 @@ def spacy_sentiments(text):
 
 
 def display_sentiments(spacy_text, opacity = 5):
+    template = default_template.replace('padding: 0.45em 0.6em', 'padding: 0.75em'
+                            ).replace(' margin-left: 0.5rem', ' margin-left: 0.2rem'
+                            ).replace('border-radius: 0.35em', 'border-radius: 1em')
     
-    alpha = str(opacity / 10)
+    if opacity < 5:
+        template = template[:template.find('<span style=')] + '</mark>'
+    
+    
+    alpha = str(opacity / 5)
     
     sentiments_colors = {}
 
     for i in range(-10,11):
         if i > 0:
             sentiments_colors.update({str(round(i/10, 1)):
-                                    f"hsla(100, 100%, {80 - i * 5}%, {alpha})"})
+                                    f"linear-gradient(0deg, transparent {70 - opacity * 4}%, hsla(100, 100%, {80 - i * 5}%, {alpha}) {70 - opacity * 4}%, transparent)"})
         if i < 0:
             sentiments_colors.update({str(round(i/10, 1)): 
-                                    f"hsla({40 - abs(i) * 4}, 100%, {80 - abs(i) * 3}%, {alpha})"})
+                                    f"linear-gradient(0deg, transparent, hsla({40 - abs(i) * 4}, 100%, {80 - abs(i) * 3}%, {alpha}) {30 + opacity * 4}%, transparent {30 + opacity * 4}%)"})
         
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
             style='ent',
-            options={'colors': sentiments_colors}
+            options={'colors': sentiments_colors, 'template': template}
             )
         
         html = html.replace('\n', ' ')
@@ -603,13 +608,13 @@ def spacy_subjectivity(text):
 
 
 def display_subjectivity(spacy_text, opacity = 5):
-    alpha = str(opacity / 10)
+    alpha = str(0.2 + opacity / 5)
     
     subjectivity_colors = {}
 
     for i in range(0,11):
         subjectivity_colors.update({str(round(i/10, 1)):
-                                f"hsla({250 + i * 5}, 100%, {100 - i * 4}%, {alpha})"})
+                                f"radial-gradient(hsla({250 + i * 5}, 100%, {100 - i * 4}%, {alpha}), transparent {65 + opacity * 3}%)"})
 
     for verse in spacy_text['lines']:
         html = displacy.render(
