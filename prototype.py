@@ -430,22 +430,29 @@ def spacy_quantity(text):
 
 
 def display_quantity(spacy_text, opacity = 5):
+    template = default_template.replace('border-radius: 0.35',
+            'border-radius: 0').replace('padding: 0.45em 0.6em', 'padding: 0.1em')
     
-    quantity_colors =  {'SING': f' transparent; border-bottom: {str(opacity / 5 / 5)}em solid hsl(120, 0%, 70%)',
-                    'PLUR': f' transparent; border-bottom: {str(opacity / 5 / 2)}em double hsl(55, 95%, 50%)'}
+    if opacity < 4:
+        template = template[:template.find('<span style=')] + '</mark>'
+    
+    quantity_colors =  {'SING': f' transparent; border-bottom: {str(opacity / 5 / 6)}em solid hsl(120, 0%, 70%)',
+                    'PLUR': f' transparent; border-bottom: {str(opacity / 5 / 3.5)}em double hsl(55, 95%, 50%)'}
   
     
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
             style='ent',
-            options={'colors': quantity_colors, 'template':
-                     default_template.replace('border-radius: 0.35',
-                                              'border-radius: 0').replace('padding: 0.45em 0.6em', 'padding: 0.1em')}
+            options={'colors': quantity_colors, 'template': template}
             )
   
         
         html = html.replace('\n', ' ')
+        
+        if opacity > 3 and opacity < 8:
+            html = html.replace('SING', 'SG').replace('PLUR', 'PL')
+            
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
 
 
