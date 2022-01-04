@@ -431,10 +431,9 @@ def spacy_quantity(text):
 
 def display_quantity(spacy_text, opacity = 5):
     
-    alpha = str(opacity / 10)
-    
-    quantity_colors =  {'SING': 'hsla(120, 0%, 70%, '+ alpha +')',
-                    'PLUR': 'hsla(55, 95%, 50%, '+ alpha +')'}
+    quantity_colors =  {'SING': f' transparent; border-bottom: {str(opacity / 5 / 5)}em solid hsl(120, 0%, 70%)',
+                    'PLUR': f' transparent; border-bottom: {str(opacity / 5 / 2)}em double hsl(55, 95%, 50%)'}
+  
     
     for verse in spacy_text['lines']:
         html = displacy.render(
@@ -442,7 +441,7 @@ def display_quantity(spacy_text, opacity = 5):
             style='ent',
             options={'colors': quantity_colors, 'template':
                      default_template.replace('border-radius: 0.35',
-                                              'border-radius: 0.9')}
+                                              'border-radius: 0').replace('padding: 0.45em 0.6em', 'padding: 0.1em')}
             )
   
         
