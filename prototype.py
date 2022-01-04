@@ -64,34 +64,34 @@ def main():
         st.form_submit_button(label='Analyze',
                               help='Save the text in the box above.')
 
-    menu = ['\N{Jigsaw Puzzle Piece} part of speech pattern view',
-            '\N{Right-Pointing Magnifying Glass} part of speech search filter',
-            '\N{Busts in Silhouette} named entities recognition',
+    menu = ['\N{Right-Pointing Magnifying Glass} search by word class',
+            '\N{Jigsaw Puzzle Piece} syntax structure',
             '\N{Hourglass with Flowing Sand} tenses',
-            'quantities',
-            'persons',
-            'sentiments',
-            'subjectivity', 
+            '\N{Scales} quantities',
+            '\N{Busts in Silhouette} persons',
+            '\N{Paperclip} named or specfic things',
+            '\N{Performing Arts} sentiments',
+            '\N{Thought Balloon} subjectivity', 
             'plain text']
 
     
     current = st.sidebar.radio('2. Generate annotation filters:', menu)
 
-    if current == '\N{Jigsaw Puzzle Piece} part of speech pattern view':
+    if current == '\N{Jigsaw Puzzle Piece} syntax structure':
         opacity = opacity_ruler()
 
         display_pos(spacy_pos(st.session_state.text),
                     opacity=opacity,
                     pos_style='pattern')
 
-    elif current == '\N{Right-Pointing Magnifying Glass} part of speech search filter':
+    elif current == '\N{Right-Pointing Magnifying Glass} search by word class':
         opacity = opacity_ruler()
 
         display_pos(spacy_pos(st.session_state.text),
                     opacity=opacity,
                     pos_style='search')
 
-    elif current == '\N{Busts in Silhouette} named entities recognition':
+    elif current == '\N{Paperclip} named or specfic things':
         opacity = opacity_ruler(3, 2)
         
         display_ner(spacy_ner(st.session_state.text), opacity)
@@ -101,25 +101,25 @@ def main():
         
         display_tenses(spacy_tenses(st.session_state.text), opacity)
         
-    elif current == 'quantities':
+    elif current == '\N{Scales} quantities':
         opacity = opacity_ruler()
 
         display_quantity(spacy_quantity(st.session_state.text),
                     opacity=opacity)
         
-    elif current == 'persons':
+    elif current == '\N{Busts in Silhouette} persons':
         opacity = opacity_ruler()
 
         display_persons(spacy_persons(st.session_state.text),
                     opacity=opacity)
         
-    elif current == 'sentiments':
+    elif current == '\N{Performing Arts} sentiments':
         opacity = opacity_ruler()
 
         display_sentiments(spacy_sentiments(st.session_state.text),
                     opacity=opacity)
         
-    elif current == 'subjectivity':
+    elif current == '\N{Thought Balloon} subjectivity':
         opacity = opacity_ruler()
         
         display_subjectivity(spacy_subjectivity(st.session_state.text),
