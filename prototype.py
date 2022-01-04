@@ -52,10 +52,17 @@ def meta_data():
 
 def main():
     meta_data()
+    
+    with st.sidebar.form(key='text_form'):
+        #with st.expander('Text editor', expanded=True):
+        st.session_state.text = st.text_area(label='Enter a text to analyze:',
+                            value=st.session_state.text, height=200,
+                            help='You can copy paste a text here '
+                                'and collapse this box.')
+        st.form_submit_button(label='Analyze',
+                              help='Save the text in the box above.')
 
-
-    menu = ['home',
-            '\N{Jigsaw Puzzle Piece} part of speech pattern view',
+    menu = ['\N{Jigsaw Puzzle Piece} part of speech pattern view',
             '\N{Right-Pointing Magnifying Glass} part of speech search filter',
             '\N{Busts in Silhouette} named entities recognition',
             '\N{Hourglass with Flowing Sand} tenses',
@@ -66,13 +73,9 @@ def main():
             'plain text']
 
     
-    st.sidebar.subheader('Generate annotations')
-    current = st.sidebar.radio('Switch between filters', menu)
+    current = st.sidebar.radio('Generate annotation filters', menu)
 
-    if current == 'home':
-        home()
-
-    elif current == '\N{Jigsaw Puzzle Piece} part of speech pattern view':
+    if current == '\N{Jigsaw Puzzle Piece} part of speech pattern view':
         opacity = opacity_ruler()
 
         display_pos(spacy_pos(st.session_state.text),
@@ -123,19 +126,6 @@ def main():
     else: 
         st.markdown(st.session_state.text.replace('\n\n', '\n---\n'
                                                   ).replace('\n', '\n\n'))
-
-def home():
-    st.title('Patterns in poetry tool')
-    
-
-    with st.form(key='text_form'):
-        #with st.expander('Text editor', expanded=True):
-        st.session_state.text = st.text_area(label='Enter a text to analyze:',
-                            value=st.session_state.text, height=300,
-                            help='You can copy paste a text here '
-                                'and collapse this box.')
-        st.form_submit_button(label='Analyze',
-                              help='Save the text in the box above.')
 
 
 @st.cache(allow_output_mutation=True)
