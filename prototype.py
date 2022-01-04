@@ -53,10 +53,12 @@ def meta_data():
 def main():
     meta_data()
     
+    st.sidebar.info('This tool uses artificial intelligence to extract features of language')
+    
     with st.sidebar.form(key='text_form'):
         #with st.expander('Text editor', expanded=True):
-        st.session_state.text = st.text_area(label='Enter a text to analyze:',
-                            value=st.session_state.text, height=200,
+        st.session_state.text = st.text_area(label='1. Enter a text to analyze:',
+                            value=st.session_state.text, height=100,
                             help='You can copy paste a text here '
                                 'and collapse this box.')
         st.form_submit_button(label='Analyze',
@@ -73,7 +75,7 @@ def main():
             'plain text']
 
     
-    current = st.sidebar.radio('Generate annotation filters', menu)
+    current = st.sidebar.radio('2. Generate annotation filters:', menu)
 
     if current == '\N{Jigsaw Puzzle Piece} part of speech pattern view':
         opacity = opacity_ruler()
@@ -162,24 +164,22 @@ def display_ner(spacy_text, opacity):
         html = html.replace('\n', ' ')
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
 
-    st.title('')
-    st.caption(
-        f'     Probability based annotations by spaCy model {spacy_model}')
+  
+    st.sidebar.markdown('##### 3. Interpret the poem with the annotations:')
+    #with st.sidebar.expander('More information (click here to hide)', expanded=True):
+    st.sidebar.info('This model extracts key information. It is trained mostly on '
+            'texts related to news, but also on conversations, weblogs, '
+            'and religious texts.')
 
-    with st.sidebar.expander('More information (click here to hide)', expanded=True):
-        st.info('This model extracts key information. It is trained mostly on'
-                        'texts related to news, but also on conversations, weblogs,'
-                        'religious texts.')
-
-        st.info('*Tips for interpretation:* Are the pieces of information '
-                        'that are extracted important in the poem, or is their role '
-                        'more of one of ornaments to add detail to a text?' '\n\n'
-                        'If there are misclassifications, this could be due to the '
-                        'model not being trained for poetry. But there could also be '
-                        'other reasons that could have lead to this, such as the '
-                        'sentence structure or lexical context. It may be interesting '
-                        'to look at those, if they confuse the machine, what does '
-                        'this mean for us?')
+    st.sidebar.info('**Tips for interpretation:** Are the pieces of information '
+            'that are extracted important in the poem, or is their role '
+            'more of one of ornaments to add detail to a text?' '\n\n'
+            'If there are misclassifications, this could be due to the '
+            'model not being trained for poetry. But there could also be '
+            'other reasons that could have lead to this, such as the '
+            'sentence structure or lexical context. It may be interesting '
+            'to look at those, if they confuse the machine, what does '
+            'this mean for us?')
 
 
 @st.cache(allow_output_mutation=True)
@@ -620,7 +620,7 @@ def display_subjectivity(spacy_text, opacity = 5):
 
 
 def opacity_ruler(max = 10, start = 5):
-    opacity = st.sidebar.slider('Annotation presence', 0, max, start,
+    opacity = st.sidebar.slider('--- Levels of annotation presence:', 0, max, start,
                                 help='You can make the annotations more vivid or discrete '
                                 ' to focus on them or to make them subtle when reading')
     return opacity
