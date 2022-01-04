@@ -87,10 +87,14 @@ def main():
                     pos_style='search')
 
     elif current == '\N{Busts in Silhouette} named entities recognition':
-        display_ner(spacy_ner(st.session_state.text))
+        opacity = opacity_ruler(3, 2)
+        
+        display_ner(spacy_ner(st.session_state.text), opacity)
         
     elif current == '\N{Hourglass with Flowing Sand} tenses':
-        display_tenses(spacy_tenses(st.session_state.text))
+        opacity = opacity_ruler(3, 2)
+        
+        display_tenses(spacy_tenses(st.session_state.text), opacity)
         
     elif current == 'quantities':
         opacity = opacity_ruler()
@@ -142,13 +146,27 @@ def spacy_ner(text):
     return {'text': full_text, 'lines': verses}
 
 
-def display_ner(spacy_text):
+def display_ner(spacy_text, opacity):
+    template = default_template.replace('border-radius',
+                    'border:0.1rem solid hsla(0, 0%, 0%, 0.2); border-radius')
+    
+    if opacity == 2:
+        template = template.replace('background: {bg}', 'background: transparent').replace(
+            'font-weight: bold', 'background: {bg}; font-family: sans-serif')
+    
+    elif opacity < 3:
+        template = template.replace('background: {bg}', 'background: transparent').replace(
+            'font-weight: bold', 'font-family: sans-serif')
+    
+    if opacity == 0:
+        template = template[:template.find('<span style=')] + '</mark>'
+    
+    
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
             style='ent',
-            options={'template': default_template.replace('border-radius',
-                    'border:0.1rem solid hsla(0, 0%, 0%, 0.2); border-radius')}
+            options={'template': template}
             )
 
         html = html.replace('\n', ' ')
@@ -158,12 +176,12 @@ def display_ner(spacy_text):
     st.caption(
         f'     Probability based annotations by spaCy model {spacy_model}')
 
-    with st.expander('More information (click here to hide)', expanded=True):
-        st.sidebar.info('This model extracts key information. It is trained mostly on'
+    with st.sidebar.expander('More information (click here to hide)', expanded=True):
+        st.info('This model extracts key information. It is trained mostly on'
                         'texts related to news, but also on conversations, weblogs,'
                         'religious texts.')
 
-        st.sidebar.info('*Tips for interpretation:* Are the pieces of information '
+        st.info('*Tips for interpretation:* Are the pieces of information '
                         'that are extracted important in the poem, or is their role '
                         'more of one of ornaments to add detail to a text?' '\n\n'
                         'If there are misclassifications, this could be due to the '
@@ -348,22 +366,39 @@ def spacy_tenses(text):
     return {'text': full_text, 'lines': verses}
 
 
-def display_tenses(spacy_text):
+def display_tenses(spacy_text, opacity):
+    template = default_template.replace('padding: 0.45em 0.6em; margin: 0 0.25em;',
+                                        'padding: 0.45em 0.6em; margin: 0;')
     
-    time_colors = {'OTHER': 'linear-gradient(90deg, transparent, lightBlue)',
+    if opacity == 0 or opacity == 2:
+        template = template[:template.find('<span style=')] + '</mark>'
+
+       
+    if opacity <= 1:
+        time_colors = {'OTHER': 'transparent',
+                   'PAST': 'transparent',
+                   'PRESENT': 'transparent'}
+        
+        template = template.replace('padding: 0.45em 0.6em;','padding: 0;').replace('margin-left: 0.5rem', '')
+    else:
+        time_colors = {'OTHER': 'linear-gradient(90deg, transparent, lightBlue)',
                    'PAST': 'linear-gradient(90deg, orange, transparent)',
                    'PRESENT': 'linear-gradient(0deg, yellow, transparent)'}
     
+
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
             style='ent',
             options={'colors': time_colors, 'template':
-                     default_template.replace('border-radius: 0.35',
-                                              'border-radius: 0.9')}
+                     template.replace('border-radius: 0.35',
+                        'border-radius: 0.9').replace('{text}', '<span class="{label}">{text}</span>')}
             )
 
         html = html.replace('\n', ' ')
+        html = html.replace('class="OTHER"', 'class="OTHER" style="font-style: italic;"')
+        html = html.replace('class="PAST"', """class="OTHER" style="display: inline-block; -webkit-transform: skew(10deg,0deg); -moz-transform: skew(10deg,0deg); transform: skew(10deg,0deg);" """)
+        
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
         
         
@@ -583,8 +618,8 @@ def display_subjectivity(spacy_text, opacity = 5):
 
 
 
-def opacity_ruler():
-    opacity = st.sidebar.slider('Annotation presence', 0, 10, 5,
+def opacity_ruler(max = 10, start = 5):
+    opacity = st.sidebar.slider('Annotation presence', 0, max, start,
                                 help='You can make the annotations more vivid or discrete '
                                 ' to focus on them or to make them subtle when reading')
     return opacity
