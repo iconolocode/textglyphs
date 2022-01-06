@@ -6,7 +6,10 @@ wrapper = """<div style="background: rgba(255, 255, 255, 0.3); op overflow-x: au
 style = """<style>mark.entity { display: inline-block }</style>"""
 
 def display_ner(spacy_text, opacity):
-    template = default_template.replace('border-radius',
+    template = default_template
+    
+    if opacity < 3:
+        template = template.replace('border-radius',
                     'border:0.1rem solid hsla(0, 0%, 0%, 0.2); border-radius')
     
     if opacity == 2:

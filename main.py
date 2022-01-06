@@ -29,6 +29,7 @@ if 'text' not in st.session_state:
                             'Then Orient showed a single Flag,\n'
                             'And signed the Fete away - ')
 
+
 if 'analyzed_text' not in st.session_state:
     st.session_state.analyzed_text = False
 
@@ -65,9 +66,11 @@ def main():
                             value=st.session_state.text, height=100,
                             help='You can copy paste a text here '
                                 'and collapse this box.')
-        st.form_submit_button(label='Analyze',
+        new_text = st.form_submit_button(label='Analyze',
                               help='Save the text in the box above.')
-        st.session_state.analyzed_text = False
+        print(new_text)
+        if new_text:
+            st.session_state.analyzed_text = False
 
     menu = ['\N{Right-Pointing Magnifying Glass} search by word class',
             '\N{Jigsaw Puzzle Piece} syntax structure',
@@ -81,10 +84,11 @@ def main():
     
     current = st.sidebar.radio('2. Generate annotation filters:', menu)
 
-    filters = (spacy_pos, spacy_ner, spacy_tenses, spacy_quantity,
-               spacy_persons, spacy_sentiments, spacy_subjectivity)
+    filters = (detect_pos, detect_ner, detect_tenses, detect_quantity,
+               detect_persons, detect_sentiments, detect_subjectivity)
     
-    if not st.session_state.textblob:
+    if st.session_state.analyzed_text == False:
+        print('.')
         loading_bar = st.progress(0)
         for step, f in enumerate(filters):
             loading_bar.progress(1/len(filters) * step)
@@ -94,35 +98,35 @@ def main():
 
     if current == '\N{Jigsaw Puzzle Piece} syntax structure':
         opacity = opacity_ruler()
-        display_pos(spacy_pos(st.session_state.text), 'pattern', opacity)
+        display_pos(detect_pos(st.session_state.text), 'pattern', opacity)
 
     elif current == '\N{Right-Pointing Magnifying Glass} search by word class':
         opacity = opacity_ruler()
-        display_pos(spacy_pos(st.session_state.text), 'search', opacity)
+        display_pos(detect_pos(st.session_state.text), 'search', opacity)
 
     elif current == '\N{Paperclip} named or specfic things':
-        opacity = opacity_ruler(3, 2)
-        display_ner(spacy_ner(st.session_state.text), opacity)
+        opacity = opacity_ruler(max=3)
+        display_ner(detect_ner(st.session_state.text), opacity)
         
     elif current == '\N{Hourglass with Flowing Sand} tenses':
-        opacity = opacity_ruler(3, 2)
-        display_tenses(spacy_tenses(st.session_state.text), opacity)
+        opacity = opacity_ruler(max=3)
+        display_tenses(detect_tenses(st.session_state.text), opacity)
         
     elif current == '\N{Scales} quantities':
         opacity = opacity_ruler()
-        display_quantity(spacy_quantity(st.session_state.text), opacity)
+        display_quantity(detect_quantity(st.session_state.text), opacity)
         
     elif current == '\N{Busts in Silhouette} persons':
         opacity = opacity_ruler()
-        display_persons(spacy_persons(st.session_state.text), opacity)
+        display_persons(detect_persons(st.session_state.text), opacity)
         
     elif current == '\N{Performing Arts} sentiments':
         opacity = opacity_ruler()
-        display_sentiments(spacy_sentiments(st.session_state.text), opacity)
+        display_sentiments(detect_sentiments(st.session_state.text), opacity)
         
     elif current == '\N{Thought Balloon} subjectivity':
         opacity = opacity_ruler()
-        display_subjectivity(spacy_subjectivity(st.session_state.text), opacity)
+        display_subjectivity(detect_subjectivity(st.session_state.text), opacity)
         
     else: 
         st.markdown(st.session_state.text.replace('\n\n', '\n---\n'

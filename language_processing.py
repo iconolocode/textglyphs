@@ -4,19 +4,19 @@ from spacy.matcher import Matcher, PhraseMatcher
 from spacy.tokens import Span
 from spacytextblob.spacytextblob import SpacyTextBlob
 
-spacy_model = 'en_core_web_sm'
+detect_model = 'en_core_web_sm'
 
 @st.cache(allow_output_mutation=True)
-def spacy_ner(text):
-    ner_nlp = spacy.load(spacy_model)
+def detect_ner(text):
+    ner_nlp = spacy.load(detect_model)
     full_text = ner_nlp(text)
     verses = [ner_nlp(verse) for verse in text.split('\n')]
     return {'text': full_text, 'lines': verses}
 
 
 @st.cache(allow_output_mutation=True)
-def spacy_pos(text):
-    pos_nlp = spacy.load(spacy_model, disable=["ner"])
+def detect_pos(text):
+    pos_nlp = spacy.load(detect_model, disable=["ner"])
     full_text = pos_nlp(text)
     verses = [pos_nlp(verse) for verse in text.split('\n')]
 
@@ -61,9 +61,9 @@ def spacy_pos(text):
 
 
 @st.cache(allow_output_mutation=True)        
-def spacy_quantity(text):
+def detect_quantity(text):
     
-    quantity_nlp = spacy.load(spacy_model, disable=["ner"])
+    quantity_nlp = spacy.load(detect_model, disable=["ner"])
     full_text = quantity_nlp(text)
     verses = [quantity_nlp(verse) for verse in text.split('\n')]
 
@@ -88,9 +88,9 @@ def spacy_quantity(text):
 
 
 @st.cache(allow_output_mutation=True)        
-def spacy_persons(text):
+def detect_persons(text):
     
-    persons_nlp = spacy.load(spacy_model, disable=["ner"])
+    persons_nlp = spacy.load(detect_model, disable=["ner"])
     full_text = persons_nlp(text)
     verses = [persons_nlp(verse) for verse in text.split('\n')]
 
@@ -123,9 +123,9 @@ def spacy_persons(text):
 
 
 @st.cache(allow_output_mutation=True)
-def spacy_tenses(text):
+def detect_tenses(text):
     
-    tenses_nlp = spacy.load(spacy_model, disable=["ner"])
+    tenses_nlp = spacy.load(detect_model, disable=["ner"])
     full_text = tenses_nlp(text)
     verses = [tenses_nlp(verse) for verse in text.split('\n')]
 
@@ -153,9 +153,9 @@ def spacy_tenses(text):
 
 
 @st.cache(allow_output_mutation=True)        
-def spacy_sentiments(text):
+def detect_sentiments(text):
     
-    sentiments_nlp = spacy.load(spacy_model, disable=["ner"])
+    sentiments_nlp = spacy.load(detect_model, disable=["ner"])
     sentiments_nlp.add_pipe('spacytextblob')
     full_text = sentiments_nlp(text)
     verses = [sentiments_nlp(verse) for verse in text.split('\n')]
@@ -177,9 +177,9 @@ def spacy_sentiments(text):
 
 
 @st.cache(allow_output_mutation=True)        
-def spacy_subjectivity(text):
+def detect_subjectivity(text):
     
-    subjectivity_nlp = spacy.load(spacy_model, disable=["ner"])
+    subjectivity_nlp = spacy.load(detect_model, disable=["ner"])
     subjectivity_nlp.add_pipe('spacytextblob')
     full_text = subjectivity_nlp(text)
     verses = [subjectivity_nlp(verse) for verse in text.split('\n')]
