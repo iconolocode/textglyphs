@@ -49,7 +49,7 @@ def display_ner(spacy_text, opacity):
             'this mean for us?')
     
     
-def display_pos(spacy_text, pos_style='pattern', opacity=10):
+def display_pos(spacy_text, pos_style, opacity):
 
     alpha = str(opacity / 10)
 
@@ -144,7 +144,7 @@ def display_pos(spacy_text, pos_style='pattern', opacity=10):
         st.sidebar.info('*Tips for interpretation: TODO*')
         
         
-def display_quantity(spacy_text, opacity = 5):
+def display_quantity(spacy_text, opacity):
     template = default_template.replace('border-radius: 0.35',
             'border-radius: 0').replace('padding: 0.45em 0.6em', 'padding: 0.1em')
     
@@ -171,7 +171,7 @@ def display_quantity(spacy_text, opacity = 5):
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
         
     
-def display_persons(spacy_text, opacity = 5):
+def display_persons(spacy_text, opacity):
     template = default_template.replace('padding: 0.45em 0.6em', 'padding: 0.3em'
                             ).replace(' margin-left: 0.5rem', ' margin-left: 0.2rem')
     
@@ -240,7 +240,7 @@ def display_tenses(spacy_text, opacity):
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
         
         
-def display_sentiments(spacy_text, opacity = 5):
+def display_sentiments(spacy_text, opacity):
     template = default_template.replace('padding: 0.45em 0.6em', 'padding: 0.75em'
                             ).replace(' margin-left: 0.5rem', ' margin-left: 0.2rem'
                             ).replace('border-radius: 0.35em', 'border-radius: 1em')
@@ -272,7 +272,7 @@ def display_sentiments(spacy_text, opacity = 5):
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
         
         
-def display_subjectivity(spacy_text, opacity = 5):
+def display_subjectivity(spacy_text, opacity):
     alpha = str(0.2 + opacity / 5)
     
     subjectivity_colors = {}

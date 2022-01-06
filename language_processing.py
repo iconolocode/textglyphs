@@ -202,4 +202,3 @@ def spacy_subjectivity(text):
 
     return {'text': full_text, 'lines': verses}
 
-
