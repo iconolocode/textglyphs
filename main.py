@@ -68,7 +68,6 @@ def main():
                                 'and collapse this box.')
         new_text = st.form_submit_button(label='Analyze',
                               help='Save the text in the box above.')
-        print(new_text)
         if new_text:
             st.session_state.analyzed_text = False
 
@@ -90,7 +89,6 @@ def main():
                detect_persons, detect_sentiments, detect_subjectivity)
     
     if st.session_state.analyzed_text == False:
-        print('.')
         loading_bar = st.progress(0)
         for step, f in enumerate(filters):
             loading_bar.progress(1/len(filters) * step)
@@ -131,9 +129,13 @@ def main():
         display_subjectivity(detect_subjectivity(st.session_state.text), opacity)
         
     else: 
-        st.markdown('1. ' + st.session_state.text.replace('\n\n', '---\n'
+        if st.sidebar.checkbox('numberng', True):
+            st.markdown('1. ' + st.session_state.text.replace('\n\n', '---\n'
                                                   ).replace('\n', '\n\n 1. '
                                                     ).replace('---', '\n     ---'))
+        else:
+            st.markdown(st.session_state.text.replace('\n\n', '\n---\n'
+                                                  ).replace('\n', '\n\n'))
 
 
 if __name__ == '__main__':
