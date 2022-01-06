@@ -131,8 +131,9 @@ def main():
         display_subjectivity(detect_subjectivity(st.session_state.text), opacity)
         
     else: 
-        st.markdown(st.session_state.text.replace('\n\n', '\n---\n'
-                                                  ).replace('\n', '\n\n'))
+        st.markdown('1. ' + st.session_state.text.replace('\n\n', '---\n'
+                                                  ).replace('\n', '\n\n 1. '
+                                                    ).replace('---', '\n     ---'))
 
 
 if __name__ == '__main__':
