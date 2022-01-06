@@ -23,7 +23,6 @@ def display_ner(spacy_text, opacity):
     if opacity == 0:
         template = template[:template.find('<span style=')] + '</mark>'
     
-    
     for verse in spacy_text['lines']:
         html = displacy.render(
             verse,
@@ -34,16 +33,14 @@ def display_ner(spacy_text, opacity):
         html = html.replace('\n', ' ')
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
 
-  
     st.sidebar.markdown('##### 3. Interpret the poem with the annotations:')
-    #with st.sidebar.expander('More information (click here to hide)', expanded=True):
-    st.sidebar.info('This model extracts key information. It is trained mostly on '
+    st.sidebar.info('**Note:** This model extracts key information. It is trained mostly on '
             'texts related to news, but also on conversations, weblogs, '
             'and religious texts.')
 
     st.sidebar.info('**Tips for interpretation:** Are the pieces of information '
             'that are extracted important in the poem, or is their role '
-            'more of one of ornaments to add detail to a text?' '\n\n'
+            'more to add detail to a text?' '\n\n'
             'If there are misclassifications, this could be due to the '
             'model not being trained for poetry. But there could also be '
             'other reasons that could have lead to this, such as the '
@@ -100,8 +97,7 @@ def display_pos(spacy_text, pos_style, opacity):
                                             format_func=lambda option: option +
                                             ' ' + str(sum([1 for pos
                                                 in spacy_text['text'].ents
-                                            if pos.label_ in pos_categories[option]])),
-                                            help='TODO')
+                                            if pos.label_ in pos_categories[option]])))
         
         pos_selection = pos_categories[search_bar]
         
@@ -109,13 +105,12 @@ def display_pos(spacy_text, pos_style, opacity):
                 in pos_categories[search_bar]]) == 0:
             st.sidebar.warning('unvalid selection, no text to annotate found')
         
-        if st.sidebar.checkbox('advanced selection:', help='TODO'):
+        if st.sidebar.checkbox('advanced selection:'):
             all_pos = set([pos.label_ for pos in spacy_text['text'].ents])
             extra_bar = st.sidebar.multiselect('Select the parts to focus on:',
                         all_pos,
                         default=list(set(pos_categories[search_bar])
-                                     .intersection(all_pos)),
-                        help='TODO')
+                                     .intersection(all_pos)))
 
             pos_selection = extra_bar
         
@@ -142,9 +137,19 @@ def display_pos(spacy_text, pos_style, opacity):
 
         html = html.replace('\n', ' ')
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
+        
+    st.sidebar.markdown('##### 3. Interpret the poem with the annotations:')
+    st.sidebar.info('**Note:** This model is trained mostly on '
+            'texts related to news, but also on conversations, weblogs, '
+            'and religious texts.')
 
-    with st.expander('More information (click here to hide)', expanded=True):
-        st.sidebar.info('*Tips for interpretation: TODO*')
+    st.sidebar.info('**Tips for interpretation:** Can repetitions or similar '
+                    'structures in verses be seen? The placement of words is '
+                    'something done consciously by poets to convey F meanings'
+                    ', or to create stylistic effects. \n\nLook at verbs for '
+                    'actions happening in poem, adjectives and adverbs to see'
+                    ' how things are described, punctuation to see the inner '
+                    'text structure or conjuctions to form an argumentation')
         
         
 def display_quantity(spacy_text, opacity):
@@ -172,6 +177,11 @@ def display_quantity(spacy_text, opacity):
             html = html.replace('SING', 'SG').replace('PLUR', 'PL')
             
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
+        
+    st.sidebar.markdown('##### 3. Interpret the poem with the annotations:')
+    st.sidebar.info('**Tips for interpretation:** a lot of singulars could '
+                    "convey loneliness while a lot of plurals the narrator's"
+                    ' richness')
         
     
 def display_persons(spacy_text, opacity):
@@ -205,6 +215,12 @@ def display_persons(spacy_text, opacity):
         
         html = html.replace('\n', ' ')
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
+        
+    st.sidebar.markdown('##### 3. Interpret the poem with the annotations:')
+    st.sidebar.info('**Tips for interpretation:** look at who are the actors '
+                    'in the poem. Is there a clear narrator? Whose perspective'
+                    'is shown, a person, a group, an inanimate? Do they speak'
+                    'more about hemselves or about others?')
         
         
 def display_tenses(spacy_text, opacity):
@@ -241,6 +257,11 @@ def display_tenses(spacy_text, opacity):
         html = html.replace('class="PAST"', """class="OTHER" style="display: inline-block; -webkit-transform: skew(10deg,0deg); -moz-transform: skew(10deg,0deg); transform: skew(10deg,0deg);" """)
         
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
+    
+    st.sidebar.markdown('##### 3. Interpret the poem with the annotations:')
+    st.sidebar.info('**Tips for interpretation:** when to things happen in the'
+                    ' poem? Is the action taking place now, or are these '
+                    'reminesences of the past, or plans the future?')
         
         
 def display_sentiments(spacy_text, opacity):
@@ -273,6 +294,18 @@ def display_sentiments(spacy_text, opacity):
         
         html = html.replace('\n', ' ')
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
+
+    st.sidebar.markdown('##### 3. Interpret the poem with the annotations:')
+    st.sidebar.info('**Note:** This model is trained mostly on movie reviews, '
+                    'and thus detect things from sentences that have an informal'
+                    ' register or use common words')
+
+    st.sidebar.info('**Tips for interpretation:** What is the overall tone of '
+                    'the poem? Do they change? Is there some irony?'
+                    '\n\n If the detected sentiments are incorrect this could '
+                    'be because the word has multiple meanings, or that the context'
+                    'of the poem affects it. Are they exagerated or toned down'
+                    " They it's maybe an hyperbole or euphemisms then.")
         
         
 def display_subjectivity(spacy_text, opacity):
@@ -293,3 +326,12 @@ def display_subjectivity(spacy_text, opacity):
         
         html = html.replace('\n', ' ')
         st.write(f'{style}{wrapper.format(html)}', unsafe_allow_html=True)
+        
+    st.sidebar.markdown('##### 3. Interpret the poem with the annotations:')
+    st.sidebar.info('**Note:** This model is trained mostly on movie reviews, '
+                    'and thus detect things from sentences that have an informal'
+                    ' register or use common words')
+
+    st.sidebar.info('**Tips for interpretation:** This filter behaves weirdly.'
+                    ' Why does it detect phrases as being more opinionated? '
+                    'Are they more personal? Do they state strong beliefs?')

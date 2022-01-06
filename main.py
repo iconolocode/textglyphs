@@ -43,7 +43,7 @@ def meta_data():
      menu_items={
          'Get Help': 'https://www.extremelycoolapp.com/help',
          'Report a bug': 'https://twitter.com/iconolocode',
-         'About': 'TODO: add abstract here'
+         'About': 'These filters give new perspectives on the text, or uncover some of its language features'
          }
      )
 
@@ -77,12 +77,14 @@ def main():
             '\N{Hourglass with Flowing Sand} tenses',
             '\N{Scales} quantities',
             '\N{Busts in Silhouette} persons',
-            '\N{Paperclip} named or specfic things',
+            '\N{Paperclip} named or specific things',
             '\N{Performing Arts} sentiments',
             '\N{Thought Balloon} subjectivity', 
             'plain text']
     
-    current = st.sidebar.radio('2. Generate annotation filters:', menu)
+    current = st.sidebar.radio('2. Generate annotation filters:', menu,
+                               help='These filters give new perspectives on '
+                               'the text, or uncover some of its language features')
 
     filters = (detect_pos, detect_ner, detect_tenses, detect_quantity,
                detect_persons, detect_sentiments, detect_subjectivity)
@@ -104,7 +106,7 @@ def main():
         opacity = opacity_ruler()
         display_pos(detect_pos(st.session_state.text), 'search', opacity)
 
-    elif current == '\N{Paperclip} named or specfic things':
+    elif current == '\N{Paperclip} named or specific things':
         opacity = opacity_ruler(max=3)
         display_ner(detect_ner(st.session_state.text), opacity)
         
