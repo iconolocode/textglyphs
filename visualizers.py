@@ -145,7 +145,7 @@ def display_pos(spacy_text, pos_style, opacity):
 
     st.sidebar.info('**Tips for interpretation:** Can repetitions or similar '
                     'structures in verses be seen? The placement of words is '
-                    'something done consciously by poets to convey F meanings'
+                    'something done consciously by poets to convey meanings'
                     ', or to create stylistic effects. \n\nLook at verbs for '
                     'actions happening in poem, adjectives and adverbs to see'
                     ' how things are described, punctuation to see the inner '

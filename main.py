@@ -105,11 +105,11 @@ def main():
         display_pos(detect_pos(st.session_state.text), 'search', opacity)
 
     elif current == '\N{Paperclip} named or specific things':
-        opacity = opacity_ruler(max=3)
+        opacity = opacity_ruler(max=3, start=2)
         display_ner(detect_ner(st.session_state.text), opacity)
         
     elif current == '\N{Hourglass with Flowing Sand} tenses':
-        opacity = opacity_ruler(max=3)
+        opacity = opacity_ruler(max=3, start=2)
         display_tenses(detect_tenses(st.session_state.text), opacity)
         
     elif current == '\N{Scales} quantities':
