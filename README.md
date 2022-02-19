@@ -2,7 +2,7 @@
 
 ![](screenshot.png)
 
-Language filters that give new perspectives on the text, or uncover some of the text's features, enhanced by their visual presentation.
+Language filters that give new perspectives on the text, or uncover some of the text's features, enhanced by their visual presentation. ([more info in the paper](https://github.com/iconolocode/textglyphs/blob/main/textual-glyphs-for-literary-visualisation-a-poetry-analysis-digital-tool-for-students.pdf))
 
 ---
 ### Use it:
