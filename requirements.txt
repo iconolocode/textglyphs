@@ -2,11 +2,6 @@ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.0.0
 spacytextblob
 en-core-web-sm
 spacy
-spacy-legac
-spacy-loggers
 spacytextblob
 streamlit
 textblob
-typer
-typing-extensions
-Click 
