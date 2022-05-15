@@ -3,5 +3,5 @@ spacytextblob
 en-core-web-sm
 spacy
 spacytextblob
-streamlit
+streamlit<=1.8.1
 textblob
