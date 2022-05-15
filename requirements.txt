@@ -2,7 +2,7 @@ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.0.0
 spacytextblob>=3.0.0,<4.0.0
 en-core-web-sm==3.0.0
 spacy==3.2.1
-pacy-legacy==3.0.8
+spacy-legacy==3.0.8
 spacy-loggers==1.0.1
 spacytextblob==3.0.1
 streamlit==1.4.0
